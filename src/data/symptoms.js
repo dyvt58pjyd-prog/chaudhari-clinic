@@ -11,7 +11,7 @@ export const SYMPTOMS = [
     treatmentRecommendation: "Painless Rotary Single-Visit Root Canal (RCT)",
     treatmentId: "painless-root-canal",
     confidence: "99% Confidence Match",
-    reason: "Sharp or radiating dental pain, nocturnal throbbing, or chewing pain indicates acute pulp inflammation or deep cavity requiring Senior Dental Surgeon Dr. Priyanka Chaudhari (Anekar) to preserve your tooth immediately.",
+    reason: "Sharp or radiating dental pain, nocturnal throbbing, or chewing pain indicates acute pulp inflammation or deep cavity requiring Senior Dental Surgeon Dr. Priyanka Chaudhari (Anokar) to preserve your tooth immediately.",
     questions: ["Is the pain worse with cold or hot liquids?", "Is there tooth sensitivity when biting?"]
   },
   {
@@ -25,7 +25,7 @@ export const SYMPTOMS = [
     treatmentRecommendation: "Gentle Pediatric Dentistry & Pulpectomy",
     treatmentId: "kids-pediatric-dentistry",
     confidence: "100% Specialist Match",
-    reason: "Children's teeth and jaws require specialized pedodontic care. Dr. Rutika Tulaskar (Chaudhari) holds an M.D.S. in Pediatric Dentistry, ensuring fear-free, gentle care for children.",
+    reason: "Children's teeth and jaws require specialized pedodontic care. Dr. Shrutika Tulaskar holds an M.D.S. in Pediatric Dentistry, ensuring fear-free, gentle care for children.",
     questions: ["Is the child unable to eat or sleep due to pain?", "Is there visible black discoloration on milk teeth?"]
   },
   {
@@ -39,7 +39,7 @@ export const SYMPTOMS = [
     treatmentRecommendation: "Clear Invisible Aligners & Orthodontic Braces",
     treatmentId: "invisible-aligners",
     confidence: "98% Confidence Match",
-    reason: "Spacing, crowding, and malocclusion issues are corrected using modern digital clear aligners and preventive orthodontic guidance under Dr. Rutika Tulaskar (Chaudhari).",
+    reason: "Spacing, crowding, and malocclusion issues are corrected using modern digital clear aligners and preventive orthodontic guidance under Dr. Shrutika Tulaskar.",
     questions: ["Would you prefer invisible removable aligners?", "Have you experienced jaw clicking?"]
   },
   {
@@ -81,7 +81,7 @@ export const SYMPTOMS = [
     treatmentRecommendation: "Immediate Biocompatible Titanium Dental Implant",
     treatmentId: "dental-implants",
     confidence: "99% Confidence Match",
-    reason: "A missing tooth causes adjacent teeth to shift and jawbone to resorb. Senior Dental Surgeon Dr. Priyanka Chaudhari specializes in permanent titanium implants with natural aesthetic zirconia crowns.",
+    reason: "A missing tooth causes adjacent teeth to shift and jawbone to resorb. Senior Dental Surgeon Dr. Priyanka Chaudhari (Anokar) specializes in permanent titanium implants with natural aesthetic zirconia crowns.",
     questions: ["When was the tooth lost?", "Do you wear a removable partial denture?"]
   },
   {

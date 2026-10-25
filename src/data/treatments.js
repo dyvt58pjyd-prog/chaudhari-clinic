@@ -104,7 +104,7 @@ export const TREATMENTS = [
     priceGuide: "From ₹2,200 / session"
   },
 
-  // TAB B: Dental & Oral Surgery (Dr. Priyanka Chaudhari & Dr. Rutika Tulaskar)
+  // TAB B: Dental & Oral Surgery (Dr. Priyanka Chaudhari (Anokar) & Dr. Shrutika Tulaskar)
   {
     id: "painless-root-canal",
     deptId: "dental",
@@ -113,7 +113,7 @@ export const TREATMENTS = [
     duration: "45 Mins",
     sessions: "Single sitting (Single-Visit RCT)",
     painLevel: "100% Painless (Computerized Local Anaesthesia)",
-    doctor: "Dr. Priyanka Chaudhari (Anekar)",
+    doctor: "Dr. Priyanka Chaudhari (Anokar)",
     doctorId: "dr-priyanka",
     tech: "German Rotary Endo Motor + Digital Apex Locator",
     tags: ["Painless RCT", "Single-Visit", "Tooth Preservation"],
@@ -128,7 +128,7 @@ export const TREATMENTS = [
     duration: "45 - 60 Mins",
     sessions: "Immediate load / 2-phase integration",
     painLevel: "Painless (Surgical Anaesthesia)",
-    doctor: "Dr. Priyanka Chaudhari (Anekar)",
+    doctor: "Dr. Priyanka Chaudhari (Anokar)",
     doctorId: "dr-priyanka",
     tech: "Computerized Implant System + CAD/CAM Zirconia",
     tags: ["Permanent Tooth", "Natural Bite", "Long-Term Guarantee"],
@@ -139,11 +139,11 @@ export const TREATMENTS = [
     id: "kids-pediatric-dentistry",
     deptId: "dental",
     title: "Gentle Pediatric Dentistry & Pulpectomy (MDS Lead)",
-    description: "Child-friendly specialized preventive dental care led by Pediatric Specialist Dr. Rutika Tulaskar (M.D.S. Nashik). Zero-fear child cavity treatments, pulpectomy, and space maintainers.",
+    description: "Child-friendly specialized preventive dental care led by Pediatric Specialist Dr. Shrutika Tulaskar (M.D.S. Nashik). Zero-fear child cavity treatments, pulpectomy, and space maintainers.",
     duration: "30 - 45 Mins",
     sessions: "1 to 2 child-friendly visits",
     painLevel: "100% Child-Friendly & Gentle",
-    doctor: "Dr. Rutika Tulaskar (Chaudhari)",
+    doctor: "Dr. Shrutika Tulaskar",
     doctorId: "dr-rutika",
     tech: "Pediatric Rotary Handpiece + Bio-Ceramic Sealants",
     tags: ["MDS Specialist", "Child Friendly", "Zero Anxiety"],
@@ -158,7 +158,7 @@ export const TREATMENTS = [
     duration: "2 Appointments",
     sessions: "Digital Scan -> Try-In -> Permanent Bonding",
     painLevel: "Virtually Painless",
-    doctor: "Dr. Priyanka Chaudhari (Anekar)",
+    doctor: "Dr. Priyanka Chaudhari (Anokar)",
     doctorId: "dr-priyanka",
     tech: "Digital Aesthetic Design + E.max Lithium Disilicate",
     tags: ["Smile Makeover", "Aesthetic Veneers", "Stain Resistant"],
@@ -173,7 +173,7 @@ export const TREATMENTS = [
     duration: "6 - 12 Months treatment",
     sessions: "Monthly progress reviews",
     painLevel: "Gentle tooth pressure only",
-    doctor: "Dr. Rutika Tulaskar (Chaudhari)",
+    doctor: "Dr. Shrutika Tulaskar",
     doctorId: "dr-rutika",
     tech: "3D Treatment Simulation + Custom Aligners",
     tags: ["Invisible Braces", "Removable", "No Metal Wires"],
@@ -188,7 +188,7 @@ export const TREATMENTS = [
     duration: "45 Mins",
     sessions: "Single sitting",
     painLevel: "Painless (Anti-sensitivity gel included)",
-    doctor: "Dr. Priyanka Chaudhari (Anekar)",
+    doctor: "Dr. Priyanka Chaudhari (Anokar)",
     doctorId: "dr-priyanka",
     tech: "Light-Accelerated Dental Whitening Laser",
     tags: ["Instant Bright Smile", "Enamel Safe"],
@@ -201,7 +201,7 @@ export const TREATMENTS = [
     id: "family-preventive-pass",
     deptId: "combo",
     title: "Annual Family Dental & Skin Health Screening",
-    description: "Complete preventive checkup for 2 to 4 family members: Ultrasonic dental scaling & polishing, skin & hair dermoscopy analysis by Dr. Rajnikant, Dr. Rutika, and Dr. Priyanka.",
+    description: "Complete preventive checkup for 2 to 4 family members: Ultrasonic dental scaling & polishing, skin & hair dermoscopy analysis by Dr. Rajnikant, Dr. Shrutika, and Dr. Priyanka.",
     duration: "60 Mins",
     sessions: "Annual / Semi-Annual",
     painLevel: "100% Painless",
@@ -235,7 +235,7 @@ export const COMBO_PACKAGES = [
     id: "bridal-royal-glow-smile",
     title: "Royal Pre-Wedding 'Smile & Glow' Bridal / Groom Package",
     headline: "The Signature Cross-Specialty Makeover in Khamgaon",
-    tagline: "Synchronized dual-care by Dr. Rajnikant Chaudhari & Dr. Priyanka Chaudhari",
+    tagline: "Synchronized dual-care by Dr. Rajnikant Chaudhari & Dr. Priyanka Chaudhari (Anokar)",
     highlight: "Most Popular for Brides & Grooms",
     image: "/images/cases/skin-after.jpg",
     badge: "Signature Package",
@@ -252,7 +252,7 @@ export const COMBO_PACKAGES = [
     regularPrice: "₹14,500",
     packagePrice: "₹8,999",
     savings: "Save 38%",
-    leadDoctor: "Dr. Rajnikant Chaudhari & Dr. Priyanka Chaudhari"
+    leadDoctor: "Dr. Rajnikant Chaudhari & Dr. Priyanka Chaudhari (Anokar)"
   },
   {
     id: "executive-recharge",
@@ -274,7 +274,7 @@ export const COMBO_PACKAGES = [
     regularPrice: "₹5,500",
     packagePrice: "₹3,499",
     savings: "Save 36%",
-    leadDoctor: "Dr. Rajnikant Chaudhari & Dr. Priyanka Chaudhari"
+    leadDoctor: "Dr. Rajnikant Chaudhari & Dr. Priyanka Chaudhari (Anokar)"
   },
   {
     id: "total-wellness-pass",
@@ -288,7 +288,7 @@ export const COMBO_PACKAGES = [
     features: [
       "4 Comprehensive Doctor Consultations across Skin & Dental",
       "2 Full Mouth Ultrasonic Cleanings & Polishing",
-      "1 Pediatric Dental Fluoride & Cavity Shield (Dr. Rutika - MDS)",
+      "1 Pediatric Dental Fluoride & Cavity Shield (Dr. Shrutika - MDS)",
       "Digital Intraoral Cavity Scanning & Skin Dermoscopy",
       "15% Flat Savings on all Laser, Implants & Veneer treatments all year",
       "Complimentary emergency priority appointment scheduling"
@@ -297,6 +297,6 @@ export const COMBO_PACKAGES = [
     regularPrice: "₹12,000",
     packagePrice: "₹6,499",
     savings: "Save 45%",
-    leadDoctor: "Full Specialist Panel (Dr. Rajnikant, Dr. Rutika, Dr. Priyanka)"
+    leadDoctor: "Full Specialist Panel (Dr. Rajnikant, Dr. Shrutika, Dr. Priyanka)"
   }
 ];

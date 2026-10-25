@@ -35,8 +35,8 @@ export const DOCTORS_ROSTER = [
   },
   {
     id: "dr-priyanka",
-    name: "Dr. Priyanka Chaudhari (Anekar)",
-    nameMarathi: "डॉ. प्रियांका चौधरी (अनेकार)",
+    name: "Dr. Priyanka Chaudhari (Anokar)",
+    nameMarathi: "डॉ. प्रियांका चौधरी (अनोकार)",
     qualifications: "B.D.S. (Nashik)",
     specialty: "Senior Dental Surgeon & Endodontist (Painless RCT)",
     specialtyMarathi: "दंतशल्य चिकित्सक व मुखरोग तज्ञ",
@@ -46,8 +46,8 @@ export const DOCTORS_ROSTER = [
   },
   {
     id: "dr-rutika",
-    name: "Dr. Rutika Tulaskar (Chaudhari)",
-    nameMarathi: "डॉ. ऋतिका तुळसकर (चौधरी)",
+    name: "Dr. Shrutika Tulaskar",
+    nameMarathi: "डॉ. श्रुतिका तुळसकर",
     qualifications: "B.D.S., M.D.S. (Nashik)",
     specialty: "Senior Pediatric Dental Specialist & Oral Physician",
     specialtyMarathi: "बालदंत रोग व मुखरोग तज्ञ",
@@ -104,7 +104,7 @@ const SEED_PATIENTS = [
     },
     clinicalNotes: {
       checkupDate: "2026-10-25 10:15 AM",
-      doctorName: "Dr. Priyanka Chaudhari (Anekar)",
+      doctorName: "Dr. Priyanka Chaudhari (Anokar)",
       chiefComplaints: "Severe throbbing toothache in lower right back tooth since 3 days. Unable to chew.",
       duration: "3 Days",
       clinicalFindings: "Deep disto-occlusal caries in #46, tenderness on vertical percussion (++), positive cold test lingering pain.",
@@ -113,7 +113,7 @@ const SEED_PATIENTS = [
     },
     prescription: {
       prescribedAt: "2026-10-25 10:45 AM",
-      doctorName: "Dr. Priyanka Chaudhari (Anekar)",
+      doctorName: "Dr. Priyanka Chaudhari (Anokar)",
       medicines: [
         { name: "Amoxicillin 500mg", type: "Capsule", frequency: "1-1-1 (After Food)", duration: "5 Days", instructions: "Complete full antibiotic course" },
         { name: "Zerodol-SP (Aceclofenac + Serratiopeptidase)", type: "Tablet", frequency: "1-0-1 (After Food)", duration: "3 Days", instructions: "For pain and swelling relief" },
@@ -147,7 +147,7 @@ const SEED_PATIENTS = [
         date: "2026-10-25",
         time: "10:15 AM",
         shift: "Morning OPD",
-        doctorName: "Dr. Priyanka Chaudhari (Anekar)",
+        doctorName: "Dr. Priyanka Chaudhari (Anokar)",
         diagnosis: "Acute Irreversible Pulpitis #46 with Apical Periodontitis",
         treatmentDone: "Single-sitting rotary endodontic access, biomechanical preparation, bioceramic obturation."
       }
@@ -341,7 +341,7 @@ const SEED_PATIENTS = [
     dentalLab: { status: "No Lab Work", labName: "", notes: "" },
     clinicalNotes: {
       checkupDate: "2026-10-24 11:40 AM",
-      doctorName: "Dr. Priyanka Chaudhari (Anekar)",
+      doctorName: "Dr. Priyanka Chaudhari (Anokar)",
       chiefComplaints: "Recurrent swelling and difficulty opening mouth around lower left jaw angle.",
       duration: "10 Days",
       clinicalFindings: "Mesioangular impacted tooth #38 with inflamed operculum and food impaction.",
@@ -350,7 +350,7 @@ const SEED_PATIENTS = [
     },
     prescription: {
       prescribedAt: "2026-10-24 12:15 PM",
-      doctorName: "Dr. Priyanka Chaudhari (Anekar)",
+      doctorName: "Dr. Priyanka Chaudhari (Anokar)",
       medicines: [
         { name: "Augmentin 625mg Duo", type: "Tablet", frequency: "1-0-1 (After Food)", duration: "5 Days", instructions: "Take after meals" },
         { name: "Zerodol-SP", type: "Tablet", frequency: "1-0-1 (After Food)", duration: "3 Days", instructions: "For pain and edema" },
@@ -384,7 +384,7 @@ const SEED_PATIENTS = [
         date: "2026-10-24",
         time: "11:40 AM",
         shift: "Morning OPD",
-        doctorName: "Dr. Priyanka Chaudhari (Anekar)",
+        doctorName: "Dr. Priyanka Chaudhari (Anokar)",
         diagnosis: "Acute Pericoronitis #38 Disimpaction",
         treatmentDone: "Surgical disimpaction with bone guttering and silk sutures."
       }
@@ -538,19 +538,37 @@ export class HospitalDatabase {
                 p.registeredShift = p.registeredTime.includes('PM') && parseInt(p.registeredTime, 10) >= 5 ? 'Evening OPD' : 'Morning OPD';
                 p.registeredTimestamp = new Date(p.registeredDate).getTime();
               }
+
+              // Doctor Name Normalization
+              if (p.assignedDoctorId === 'dr-priyanka') {
+                if (p.clinicalNotes && p.clinicalNotes.doctorName) p.clinicalNotes.doctorName = "Dr. Priyanka Chaudhari (Anokar)";
+                if (p.prescription && p.prescription.doctorName) p.prescription.doctorName = "Dr. Priyanka Chaudhari (Anokar)";
+              } else if (p.assignedDoctorId === 'dr-rutika') {
+                if (p.clinicalNotes && p.clinicalNotes.doctorName) p.clinicalNotes.doctorName = "Dr. Shrutika Tulaskar";
+                if (p.prescription && p.prescription.doctorName) p.prescription.doctorName = "Dr. Shrutika Tulaskar";
+              }
+
               if (!p.visitHistory) {
                 p.visitHistory = p.clinicalNotes ? [{
                   visitId: `VIS-${p.patientId}-1`,
                   date: p.registeredDate,
                   time: p.registeredTime,
                   shift: p.registeredShift,
-                  doctorName: p.clinicalNotes.doctorName || '',
+                  doctorName: p.clinicalNotes.doctorName || (p.assignedDoctorId === 'dr-priyanka' ? "Dr. Priyanka Chaudhari (Anokar)" : p.assignedDoctorId === 'dr-rutika' ? "Dr. Shrutika Tulaskar" : "Dr. Rajnikant Arvind Chaudhari"),
                   assignedDoctorId: p.assignedDoctorId,
                   diagnosis: p.clinicalNotes.diagnosis || '',
                   clinicalNotes: { ...p.clinicalNotes },
                   prescription: p.prescription ? { ...p.prescription } : null,
                   externalRvgId: p.externalRvgId || ''
                 }] : [];
+              } else {
+                p.visitHistory.forEach(vh => {
+                  if (vh.assignedDoctorId === 'dr-priyanka' || vh.doctorName?.includes('Priyanka')) {
+                    vh.doctorName = "Dr. Priyanka Chaudhari (Anokar)";
+                  } else if (vh.assignedDoctorId === 'dr-rutika' || vh.doctorName?.includes('Rutika')) {
+                    vh.doctorName = "Dr. Shrutika Tulaskar";
+                  }
+                });
               }
               return p;
             });
@@ -1050,8 +1068,8 @@ export class HospitalDatabase {
     // Doctor-wise Split
     const doctorCollections = {
       "dr-rajnikant": { count: 0, amount: 0, name: "Dr. Rajnikant Chaudhari (Dermatology)" },
-      "dr-priyanka": { count: 0, amount: 0, name: "Dr. Priyanka Chaudhari (Dental Surgery)" },
-      "dr-rutika": { count: 0, amount: 0, name: "Dr. Rutika Chaudhari (Pediatric Dental)" }
+      "dr-priyanka": { count: 0, amount: 0, name: "Dr. Priyanka Chaudhari (Anokar) (Dental Surgery)" },
+      "dr-rutika": { count: 0, amount: 0, name: "Dr. Shrutika Tulaskar (Pediatric Dental)" }
     };
 
     patients.forEach(p => {

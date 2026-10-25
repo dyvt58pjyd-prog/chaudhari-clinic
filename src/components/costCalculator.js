@@ -3,7 +3,7 @@ export const CALCULATOR_PROCEDURES = [
   {
     id: "calc-aligners",
     name: "Clear Invisible Aligners (Full Arch)",
-    doctor: "Dr. Rutika Tulaskar (Chaudhari)",
+    doctor: "Dr. Shrutika Tulaskar",
     doctorId: "dr-rutika",
     dept: "Smile Aesthetics & Orthodontics",
     baseCost: 45000,
@@ -14,7 +14,7 @@ export const CALCULATOR_PROCEDURES = [
   {
     id: "calc-implants",
     name: "Immediate Titanium Dental Implant + Zirconia Crown",
-    doctor: "Dr. Priyanka Chaudhari (Anekar)",
+    doctor: "Dr. Priyanka Chaudhari (Anokar)",
     doctorId: "dr-priyanka",
     dept: "Dental Surgery & Implantology",
     baseCost: 28000,
@@ -36,7 +36,7 @@ export const CALCULATOR_PROCEDURES = [
   {
     id: "calc-veneers",
     name: "Hollywood Smile Design (8 E.max Porcelain Veneers)",
-    doctor: "Dr. Priyanka Chaudhari (Anekar)",
+    doctor: "Dr. Priyanka Chaudhari (Anokar)",
     doctorId: "dr-priyanka",
     dept: "Cosmetic Restorative Dentistry",
     baseCost: 64000,

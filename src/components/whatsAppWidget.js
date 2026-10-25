@@ -42,11 +42,11 @@ export class WhatsAppWidget {
             <button type="button" class="wa-opt-btn" data-msg="Hi Chaudhari Clinic Khamgaon, I would like to book a Skin/Hair/Laser consultation with Dr. Rajnikant Arvind Chaudhari.">
               🌸 Book Dermatology / Skin (Dr. Rajnikant)
             </button>
-            <button type="button" class="wa-opt-btn" data-msg="Hi Chaudhari Clinic Khamgaon, I would like to book a Dental / Painless RCT / Implant consultation with Dr. Priyanka Chaudhari (Anekar).">
+            <button type="button" class="wa-opt-btn" data-msg="Hi Chaudhari Clinic Khamgaon, I would like to book a Dental / Painless RCT / Implant consultation with Dr. Priyanka Chaudhari (Anokar).">
               🦷 Book Dental Surgery & RCT (Dr. Priyanka)
             </button>
-            <button type="button" class="wa-opt-btn" data-msg="Hi Chaudhari Clinic Khamgaon, I would like to book Pediatric Dental Care / Smile Design with Dr. Rutika Tulaskar (Chaudhari).">
-              🧸 Book Pediatric & Smile Design (Dr. Rutika)
+            <button type="button" class="wa-opt-btn" data-msg="Hi Chaudhari Clinic Khamgaon, I would like to book Pediatric Dental Care / Smile Design with Dr. Shrutika Tulaskar.">
+              🧸 Book Pediatric & Smile Design (Dr. Shrutika)
             </button>
             <button type="button" class="wa-opt-btn alert-opt" data-msg="URGENT: I am experiencing severe toothache / emergency dental pain and need a same-day priority slot in Khamgaon.">
               🚨 Emergency Acute Dental Pain Slot

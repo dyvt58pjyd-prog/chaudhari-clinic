@@ -268,10 +268,10 @@ export class BookingModal {
             <div class="doctor-selection-grid">
               <button type="button" class="doc-choice-card ${this.selectedDoctorId === 'dr-priyanka' ? 'selected' : ''}" id="btn-doc-priyanka">
                 <div class="doc-choice-header">
-                  <img src="/images/dr-rohan-chaudhari.jpg" alt="Dr. Priyanka Chaudhari" class="doc-thumb-sm" />
+                  <img src="/images/dr-rohan-chaudhari.jpg" alt="Dr. Priyanka Chaudhari (Anokar)" class="doc-thumb-sm" />
                   <div>
                     <span class="doc-badge-pill blue">Dental Surgery & RCT Lead</span>
-                    <h5>Dr. Priyanka Chaudhari (Anekar)</h5>
+                    <h5>Dr. Priyanka Chaudhari (Anokar)</h5>
                     <p class="doc-creds">B.D.S. (Nashik) | 9+ Yrs Exp</p>
                   </div>
                 </div>
@@ -280,10 +280,10 @@ export class BookingModal {
 
               <button type="button" class="doc-choice-card ${this.selectedDoctorId === 'dr-rutika' ? 'selected' : ''}" id="btn-doc-rutika">
                 <div class="doc-choice-header">
-                  <img src="/images/dr-amit-chaudhari.jpg" alt="Dr. Rutika Tulaskar" class="doc-thumb-sm" />
+                  <img src="/images/dr-amit-chaudhari.jpg" alt="Dr. Shrutika Tulaskar" class="doc-thumb-sm" />
                   <div>
                     <span class="doc-badge-pill emerald">Pediatric & Oral Lead</span>
-                    <h5>Dr. Rutika Tulaskar (Chaudhari)</h5>
+                    <h5>Dr. Shrutika Tulaskar</h5>
                     <p class="doc-creds">B.D.S., M.D.S. (Nashik) | 10+ Yrs Exp</p>
                   </div>
                 </div>

@@ -66,8 +66,8 @@ export class LoginPortal {
                 <button type="button" class="btn-role-quick-pill" data-user="dr.priyanka" data-pass="dental@123">
                   👩‍⚕️ <strong>Dr. Priyanka</strong>
                 </button>
-                <button type="button" class="btn-role-quick-pill" data-user="dr.rutika" data-pass="smile@123">
-                  👩‍⚕️ <strong>Dr. Rutika</strong>
+                <button type="button" class="btn-role-quick-pill" data-user="dr.shrutika" data-pass="smile@123">
+                  👩‍⚕️ <strong>Dr. Shrutika</strong>
                 </button>
                 <button type="button" class="btn-role-quick-pill" data-user="admin" data-pass="admin@123">
                   🛡️ <strong>Admin</strong>

@@ -82,8 +82,8 @@ export class AdminPortal {
 
     const docCols = metrics.doctorCollections || {};
     const drR = docCols["dr-rajnikant"] || { count: 0, amount: 0, name: "Dr. Rajnikant Chaudhari (Dermatology)" };
-    const drP = docCols["dr-priyanka"] || { count: 0, amount: 0, name: "Dr. Priyanka Chaudhari (Dental Surgery)" };
-    const drT = docCols["dr-rutika"] || { count: 0, amount: 0, name: "Dr. Rutika Tulaskar (Pediatric Smile)" };
+    const drP = docCols["dr-priyanka"] || { count: 0, amount: 0, name: "Dr. Priyanka Chaudhari (Anokar) (Dental Surgery)" };
+    const drT = docCols["dr-rutika"] || { count: 0, amount: 0, name: "Dr. Shrutika Tulaskar (Pediatric Smile)" };
 
     return `
       <div class="admin-analytics-view animate-fade-in">
@@ -160,7 +160,7 @@ export class AdminPortal {
               <div class="doc-rev-top">
                 <span class="doc-rev-avatar">🦷</span>
                 <div>
-                  <strong>Dr. Priyanka Chaudhari (Anekar)</strong>
+                  <strong>Dr. Priyanka Chaudhari (Anokar)</strong>
                   <div class="text-xs text-muted">Dental Surgery & Single-Sitting RCT</div>
                 </div>
               </div>
@@ -173,12 +173,12 @@ export class AdminPortal {
               </div>
             </div>
 
-            <!-- Dr. Rutika -->
+            <!-- Dr. Shrutika -->
             <div class="doc-rev-card pediatric-border">
               <div class="doc-rev-top">
                 <span class="doc-rev-avatar">🧸</span>
                 <div>
-                  <strong>Dr. Rutika Tulaskar (Chaudhari)</strong>
+                  <strong>Dr. Shrutika Tulaskar</strong>
                   <div class="text-xs text-muted">Pediatric Dentistry & Smile Design</div>
                 </div>
               </div>
@@ -255,7 +255,7 @@ export class AdminPortal {
                     </td>
                     <td class="font-mono text-sm">+91 ${p.phone}</td>
                     <td>
-                      <span class="text-xs font-semibold">${p.assignedDoctorId === 'dr-rajnikant' ? 'Dr. Rajnikant (Skin)' : p.assignedDoctorId === 'dr-priyanka' ? 'Dr. Priyanka (Dental)' : 'Dr. Rutika (Pediatric)'}</span>
+                      <span class="text-xs font-semibold">${p.assignedDoctorId === 'dr-rajnikant' ? 'Dr. Rajnikant (Skin)' : p.assignedDoctorId === 'dr-priyanka' ? 'Dr. Priyanka (Anokar)' : 'Dr. Shrutika (Pediatric)'}</span>
                     </td>
                     <td>
                       <div class="text-xs font-semibold text-teal-dark">${p.clinicalNotes ? p.clinicalNotes.diagnosis : '<span class="text-muted">Awaiting checkup</span>'}</div>
@@ -437,7 +437,7 @@ export class AdminPortal {
 
               <div class="fee-config-row mt-3">
                 <div>
-                  <strong>Dr. Priyanka Chaudhari (Anekar)</strong>
+                  <strong>Dr. Priyanka Chaudhari (Anokar)</strong>
                   <div class="text-xs text-muted">Dental Surgery & Single-Sitting RCT</div>
                 </div>
                 <div class="fee-input-wrap">
@@ -448,7 +448,7 @@ export class AdminPortal {
 
               <div class="fee-config-row mt-3">
                 <div>
-                  <strong>Dr. Rutika Tulaskar (Chaudhari)</strong>
+                  <strong>Dr. Shrutika Tulaskar</strong>
                   <div class="text-xs text-muted">Pediatric Dentistry & Smile Design</div>
                 </div>
                 <div class="fee-input-wrap">

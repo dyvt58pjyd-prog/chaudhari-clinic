@@ -16,7 +16,7 @@ export const INITIAL_PATIENT_APPOINTMENTS = [
   {
     id: "CSD-APT-8821",
     doctorId: "dr-priyanka",
-    doctorName: "Dr. Priyanka Chaudhari (Anekar)",
+    doctorName: "Dr. Priyanka Chaudhari (Anokar)",
     doctorRole: "Senior Dental Surgeon",
     doctorDept: "Dental Surgery & Endodontics",
     doctorImage: "/images/dr-rohan-chaudhari.jpg",
@@ -46,7 +46,7 @@ export const INITIAL_PATIENT_APPOINTMENTS = [
   {
     id: "CSD-APT-7910",
     doctorId: "dr-rutika",
-    doctorName: "Dr. Rutika Tulaskar (Chaudhari)",
+    doctorName: "Dr. Shrutika Tulaskar",
     doctorRole: "Pediatric Dentist & Smile Specialist",
     doctorDept: "Pediatric & Preventive Dentistry",
     doctorImage: "/images/dr-amit-chaudhari.jpg",
@@ -82,7 +82,7 @@ export const MULTI_SESSION_TRACKERS = [
     id: "track-rct",
     treatmentName: "Micro-Endodontic Single-Visit RCT & Crown Rehabilitation",
     doctorId: "dr-priyanka",
-    doctorName: "Dr. Priyanka Chaudhari (Anekar)",
+    doctorName: "Dr. Priyanka Chaudhari (Anokar)",
     dept: "Endodontics",
     totalSessions: 2,
     completedSessions: 1,
@@ -98,7 +98,7 @@ export const MULTI_SESSION_TRACKERS = [
     id: "track-aligner",
     treatmentName: "Clear Invisible Aligners Smile Transformation",
     doctorId: "dr-rutika",
-    doctorName: "Dr. Rutika Tulaskar (Chaudhari)",
+    doctorName: "Dr. Shrutika Tulaskar",
     dept: "Pediatric & Smile Aesthetics",
     totalSessions: 12,
     completedSessions: 4,
@@ -118,7 +118,7 @@ export const DIGITAL_PRESCRIPTIONS = [
   {
     id: "RX-KHM-2026-9041",
     date: "18 Oct 2026",
-    doctor: "Dr. Priyanka Chaudhari (Anekar)",
+    doctor: "Dr. Priyanka Chaudhari (Anokar)",
     degree: "B.D.S. (Nashik)",
     dept: "Dental & Oral Surgery",
     dispensedBy: "Prescription Issued at Doctor Cabin",
@@ -129,7 +129,7 @@ export const DIGITAL_PRESCRIPTIONS = [
       { name: "Hexidine Mouthwash (0.2% Chlorhexidine Gluconate)", dosage: "10 ml rinse twice daily, do not swallow", duration: "5 Days" }
     ],
     instructions: "Light warm saline rinses starting 24h post-RCT. Do not bite on hard foods on left side until crown is seated.",
-    signedBy: "Dr. Priyanka Chaudhari (BDS Reg No. 44812, Nashik)"
+    signedBy: "Dr. Priyanka Chaudhari (Anokar) (BDS Reg No. 44812, Nashik)"
   },
   {
     id: "RX-KHM-2026-8714",
@@ -165,7 +165,7 @@ export const INITIAL_DOCTOR_QUEUES = {
     ]
   },
   "dr-priyanka": {
-    doctorName: "Dr. Priyanka Chaudhari (Anekar)",
+    doctorName: "Dr. Priyanka Chaudhari (Anokar)",
     room: "Dental Operatory 2 (Surgical & RCT)",
     specialty: "Senior Dental Surgeon & Endodontist (BDS Nashik)",
     avatar: "/images/dr-rohan-chaudhari.jpg",
@@ -179,7 +179,7 @@ export const INITIAL_DOCTOR_QUEUES = {
     ]
   },
   "dr-rutika": {
-    doctorName: "Dr. Rutika Tulaskar (Chaudhari)",
+    doctorName: "Dr. Shrutika Tulaskar",
     room: "Dental Operatory 1 (Pediatric & Aesthetic)",
     specialty: "Pediatric Dental Specialist & Oral Physician (M.D.S. Nashik)",
     avatar: "/images/dr-amit-chaudhari.jpg",

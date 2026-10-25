@@ -267,7 +267,7 @@ export class ReceptionPortal {
                 </div>
                 <div class="p-detail">
                   <span class="lbl">Assigned Doctor:</span>
-                  <span class="val text-teal font-bold">${this.lastRegisteredPatient.assignedDoctorId === 'dr-rajnikant' ? 'Dr. Rajnikant Chaudhari (Derm)' : this.lastRegisteredPatient.assignedDoctorId === 'dr-priyanka' ? 'Dr. Priyanka Chaudhari (Dental)' : 'Dr. Rutika Tulaskar (Pediatric)'}</span>
+                  <span class="val text-teal font-bold">${this.lastRegisteredPatient.assignedDoctorId === 'dr-rajnikant' ? 'Dr. Rajnikant Chaudhari (Derm)' : this.lastRegisteredPatient.assignedDoctorId === 'dr-priyanka' ? 'Dr. Priyanka Chaudhari (Anokar) (Dental)' : 'Dr. Shrutika Tulaskar (Pediatric)'}</span>
                 </div>
               </div>
 
@@ -397,7 +397,7 @@ export class ReceptionPortal {
                     <td class="text-xs text-muted" title="${p.address}">${p.address.length > 28 ? p.address.slice(0, 28) + '...' : p.address}</td>
                     <td>
                       <span class="doc-badge-chip ${p.assignedDoctorId === 'dr-rajnikant' ? 'teal' : p.assignedDoctorId === 'dr-priyanka' ? 'blue' : 'emerald'}">
-                        ${p.assignedDoctorId === 'dr-rajnikant' ? 'Dr. Rajnikant (Derm)' : p.assignedDoctorId === 'dr-priyanka' ? 'Dr. Priyanka (RCT)' : 'Dr. Rutika (Pediatric)'}
+                        ${p.assignedDoctorId === 'dr-rajnikant' ? 'Dr. Rajnikant (Derm)' : p.assignedDoctorId === 'dr-priyanka' ? 'Dr. Priyanka (Anokar)' : 'Dr. Shrutika (Pediatric)'}
                       </span>
                     </td>
                     <td>
@@ -410,7 +410,7 @@ export class ReceptionPortal {
                     </td>
                     <td style="text-align: right;">
                       <div class="action-btn-group">
-                        <button type="button" class="btn-voice-caller-sm" data-token="${p.tokenNo}" data-name="${p.name}" data-doc="${p.assignedDoctorId === 'dr-priyanka' ? 'Dr. Priyanka' : p.assignedDoctorId === 'dr-rutika' ? 'Dr. Rutika' : 'Dr. Rajnikant'}" title="Call Voice Token">
+                        <button type="button" class="btn-voice-caller-sm" data-token="${p.tokenNo}" data-name="${p.name}" data-doc="${p.assignedDoctorId === 'dr-priyanka' ? 'Dr. Priyanka' : p.assignedDoctorId === 'dr-rutika' ? 'Dr. Shrutika' : 'Dr. Rajnikant'}" title="Call Voice Token">
                           📢
                         </button>
                         ${p.status === 'Prescription Ready' ? `

@@ -317,7 +317,7 @@ export class DoctorPortal {
                   Dr. Priyanka (${doc2Waiting})
                 </button>
                 <button type="button" class="q-filter-pill ${this.queueFilter === 'dr-rutika' ? 'active' : ''}" data-filter="dr-rutika">
-                  Dr. Rutika (${doc3Waiting})
+                  Dr. Shrutika (${doc3Waiting})
                 </button>
               </div>
             </div>
@@ -345,7 +345,7 @@ export class DoctorPortal {
                         <span class="cqr-sep">•</span>
                         <span class="cqr-phone font-mono">📞 ${p.phone}</span>
                         <span class="cqr-sep">•</span>
-                        <span class="cqr-doc-chip ${p.assignedDoctorId}">${p.assignedDoctorId === 'dr-priyanka' ? 'Dr. Priyanka' : p.assignedDoctorId === 'dr-rutika' ? 'Dr. Rutika' : 'Dr. Rajnikant'}</span>
+                        <span class="cqr-doc-chip ${p.assignedDoctorId}">${p.assignedDoctorId === 'dr-priyanka' ? 'Dr. Priyanka (Anokar)' : p.assignedDoctorId === 'dr-rutika' ? 'Dr. Shrutika Tulaskar' : 'Dr. Rajnikant'}</span>
                       </div>
                       <div class="cqr-time-line mt-1">
                         <span class="text-xs text-muted font-mono">📅 ${p.registeredDate || ''} • 🕒 ${p.registeredTime || ''}</span>

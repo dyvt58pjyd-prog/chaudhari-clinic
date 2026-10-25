@@ -132,7 +132,7 @@ export function printOpdSlip(patient, config) {
           </div>
           <div class="field-full">
             <span class="label">Consulting Doctor</span>
-            <div class="value" style="color: #0f766e;">${patient.assignedDoctorId === 'dr-priyanka' ? 'Dr. Priyanka Chaudhari (Anekar) - Dental Operatory 2' : patient.assignedDoctorId === 'dr-rutika' ? 'Dr. Rutika Tulaskar (Chaudhari) - Dental Operatory 1' : 'Dr. Rajnikant Arvind Chaudhari - Dermatology Suite 101'}</div>
+            <div class="value" style="color: #0f766e;">${patient.assignedDoctorId === 'dr-priyanka' ? 'Dr. Priyanka Chaudhari (Anokar) - Dental Operatory 2' : patient.assignedDoctorId === 'dr-rutika' ? 'Dr. Shrutika Tulaskar - Dental Operatory 1' : 'Dr. Rajnikant Arvind Chaudhari - Dermatology Suite 101'}</div>
           </div>
           ${patient.reason ? `
             <div class="field-full">
@@ -666,7 +666,7 @@ export function printConsentForm(patient, config, lang = 'mr') {
           <div><span>वय / लिंग:</span> <strong>${patient.age}y / ${patient.gender}</strong></div>
           <div><span>मोबाईल / Phone:</span> <strong>+91 ${patient.phone}</strong></div>
           <div><span>तपासणी दिनांक / Date:</span> <strong>${new Date().toLocaleDateString('en-GB')}</strong></div>
-          <div><span>उपचार करणारे डॉक्टर:</span> <strong>${patient.assignedDoctorId === 'dr-priyanka' ? 'Dr. Priyanka Chaudhari (Dental Surgeon)' : patient.assignedDoctorId === 'dr-rutika' ? 'Dr. Rutika Tulaskar (Pediatric Specialist)' : 'Dr. Rajnikant Chaudhari (Dermatologist)'}</strong></div>
+          <div><span>उपचार करणारे डॉक्टर:</span> <strong>${patient.assignedDoctorId === 'dr-priyanka' ? 'Dr. Priyanka Chaudhari (Anokar) (Dental Surgeon)' : patient.assignedDoctorId === 'dr-rutika' ? 'Dr. Shrutika Tulaskar (Pediatric Specialist)' : 'Dr. Rajnikant Chaudhari (Dermatologist)'}</strong></div>
         </div>
 
         <div class="body-text">

@@ -35,8 +35,8 @@ export const DOCTORS = [
   },
   {
     id: "dr-rutika",
-    name: "Dr. Rutika Tulaskar (Chaudhari)",
-    nameMarathi: "डॉ. ऋतिका तुळसकर (चौधरी)",
+    name: "Dr. Shrutika Tulaskar",
+    nameMarathi: "डॉ. श्रुतिका तुळसकर",
     role: "Senior Pediatric Dental Specialist & Oral Physician",
     shortRole: "Pediatric Dentistry & Oral Specialist Lead",
     department: "dental",
@@ -57,7 +57,7 @@ export const DOCTORS = [
       "Preventive Dental Care & Sealants",
       "Smile Designing & Aligners"
     ],
-    bio: "Dr. Rutika Tulaskar (Chaudhari) (B.D.S., M.D.S. Nashik) is a Master of Dental Surgery specializing in Pediatric and Preventive Dentistry and Oral Diseases. Renowned for her gentle, anxiety-free pediatric protocols, she provides compassionate, child-friendly dental care and oral health rehabilitation.",
+    bio: "Dr. Shrutika Tulaskar (B.D.S., M.D.S. Nashik) is a Master of Dental Surgery specializing in Pediatric and Preventive Dentistry and Oral Diseases. Renowned for her gentle, anxiety-free pediatric protocols, she provides compassionate, child-friendly dental care and oral health rehabilitation.",
     slots: {
       morning: ["09:30 AM", "10:15 AM", "11:00 AM", "11:45 AM", "12:30 PM", "01:15 PM"],
       evening: ["04:30 PM", "05:15 PM", "06:00 PM", "06:45 PM", "07:30 PM", "08:15 PM"]
@@ -67,8 +67,8 @@ export const DOCTORS = [
   },
   {
     id: "dr-priyanka",
-    name: "Dr. Priyanka Chaudhari (Anekar)",
-    nameMarathi: "डॉ. प्रियांका चौधरी (अनेकार)",
+    name: "Dr. Priyanka Chaudhari (Anokar)",
+    nameMarathi: "डॉ. प्रियांका चौधरी (अनोकार)",
     role: "Senior Dental Surgeon & Endodontist / Aesthetic Lead",
     shortRole: "Senior Dental Surgeon & RCT Lead",
     department: "dental",
@@ -89,7 +89,7 @@ export const DOCTORS = [
       "Laser Teeth Whitening",
       "Emergency Acute Toothache Relief"
     ],
-    bio: "Dr. Priyanka Chaudhari (Anekar) (B.D.S. Nashik) is a senior dental surgeon specializing in rotary micro-endodontics, aesthetic smile designing, and comprehensive oral surgery. With modern computerized technology, she delivers 100% painless single-sitting root canals and aesthetic restorative dentistry.",
+    bio: "Dr. Priyanka Chaudhari (Anokar) (B.D.S. Nashik) is a senior dental surgeon specializing in rotary micro-endodontics, aesthetic smile designing, and comprehensive oral surgery. With modern computerized technology, she delivers 100% painless single-sitting root canals and aesthetic restorative dentistry.",
     slots: {
       morning: ["10:30 AM", "11:15 AM", "12:00 PM", "12:45 PM", "01:30 PM", "02:15 PM"],
       evening: ["05:00 PM", "05:45 PM", "06:30 PM", "07:15 PM", "08:00 PM", "08:45 PM"]

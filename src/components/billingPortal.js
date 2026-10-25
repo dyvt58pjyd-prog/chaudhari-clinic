@@ -248,7 +248,7 @@ export class BillingPortal {
                   </div>
                   <div class="inv-row">
                     <span>Attending Doctor</span>
-                    <strong>${patient.assignedDoctorId === 'dr-rajnikant' ? 'Dr. Rajnikant Chaudhari' : patient.assignedDoctorId === 'dr-priyanka' ? 'Dr. Priyanka Chaudhari' : 'Dr. Rutika Tulaskar'}</strong>
+                    <strong>${patient.assignedDoctorId === 'dr-rajnikant' ? 'Dr. Rajnikant Chaudhari' : patient.assignedDoctorId === 'dr-priyanka' ? 'Dr. Priyanka Chaudhari (Anokar)' : 'Dr. Shrutika Tulaskar'}</strong>
                   </div>
                   <div class="inv-divider"></div>
                   <div class="inv-row">
@@ -306,7 +306,7 @@ export class BillingPortal {
                   </div>
                   <div class="bp-doctor-box">
                     <span class="bp-doc-lbl">Attending Doctor</span>
-                    <strong>${patient.clinicalNotes ? patient.clinicalNotes.doctorName : (patient.assignedDoctorId === 'dr-rajnikant' ? 'Dr. Rajnikant Chaudhari' : 'Dr. Priyanka Chaudhari')}</strong>
+                    <strong>${patient.clinicalNotes ? patient.clinicalNotes.doctorName : (patient.assignedDoctorId === 'dr-rajnikant' ? 'Dr. Rajnikant Chaudhari' : patient.assignedDoctorId === 'dr-priyanka' ? 'Dr. Priyanka Chaudhari (Anokar)' : 'Dr. Shrutika Tulaskar')}</strong>
                   </div>
                 </div>
 
@@ -555,7 +555,7 @@ export class BillingPortal {
           `Patient: ${patient.name} (${patient.patientId})\n` +
           `Invoice ID: ${bill.invoiceId}\n` +
           `Date: ${bill.billedAt}\n` +
-          `Doctor: ${patient.assignedDoctorId === 'dr-rajnikant' ? 'Dr. Rajnikant Chaudhari' : patient.assignedDoctorId === 'dr-priyanka' ? 'Dr. Priyanka Chaudhari' : 'Dr. Rutika Tulaskar'}\n` +
+          `Doctor: ${patient.assignedDoctorId === 'dr-rajnikant' ? 'Dr. Rajnikant Chaudhari' : patient.assignedDoctorId === 'dr-priyanka' ? 'Dr. Priyanka Chaudhari (Anokar)' : 'Dr. Shrutika Tulaskar'}\n` +
           `-------------------------------\n` +
           `Consultation Fee: ₹ ${bill.consultationFee.toFixed(2)}\n` +
           `${bill.procedureFee > 0 ? `Procedure Fee: ₹ ${bill.procedureFee.toFixed(2)}\n` : ''}` +

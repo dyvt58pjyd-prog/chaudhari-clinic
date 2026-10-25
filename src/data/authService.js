@@ -24,19 +24,21 @@ export const HOSPITAL_STAFF_ACCOUNTS = [
   },
   {
     username: 'dr.priyanka',
+    aliases: ['dr.priyanka', 'priyanka'],
     password: 'dental@123',
     passwords: ['dental@123', 'doctor@123'],
-    name: 'Dr. Priyanka Chaudhari (Anekar)',
+    name: 'Dr. Priyanka Chaudhari (Anokar)',
     role: 'doctor',
     department: 'Senior Dental Surgeon & Endodontist',
     doctorId: 'dr-priyanka',
     avatar: '👩‍⚕️'
   },
   {
-    username: 'dr.rutika',
+    username: 'dr.shrutika',
+    aliases: ['dr.shrutika', 'dr.rutika', 'shrutika', 'rutika'],
     password: 'pediatric@123',
     passwords: ['pediatric@123', 'smile@123', 'doctor@123'],
-    name: 'Dr. Rutika Tulaskar (Chaudhari)',
+    name: 'Dr. Shrutika Tulaskar',
     role: 'doctor',
     department: 'Pediatric Dentistry & Smile Design',
     doctorId: 'dr-rutika',
@@ -98,7 +100,7 @@ export class AuthService {
     const cleanPass = (password || '').trim();
 
     const account = HOSPITAL_STAFF_ACCOUNTS.find(acc => {
-      const matchUser = acc.username.toLowerCase() === cleanUser;
+      const matchUser = acc.username.toLowerCase() === cleanUser || (Array.isArray(acc.aliases) && acc.aliases.includes(cleanUser));
       const validPasses = Array.isArray(acc.passwords) ? acc.passwords : [acc.password];
       const matchPass = validPasses.includes(cleanPass) || acc.password === cleanPass;
       return matchUser && matchPass;
