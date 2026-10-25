@@ -8,12 +8,12 @@ import { BillingPortal } from './components/billingPortal.js';
 import { RecordsPortal } from './components/recordsPortal.js';
 import { AdminPortal } from './components/adminPortal.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+function initApplication() {
   const headerMount = document.querySelector('#app-header-mount');
   const bottomNavMount = document.querySelector('#app-bottom-nav');
   const viewport = document.querySelector('#app-viewport');
 
-  let activeView = authService.isAuthenticated() ? authService.getCurrentUser().role : 'login';
+  let activeView = authService.isAuthenticated() ? (authService.getCurrentUser()?.role || 'login') : 'login';
   let activeDoctorId = authService.getCurrentUser()?.doctorId || null;
 
   let receptionPortal = null;
@@ -80,39 +80,54 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. Authenticated States
     authBar.setActiveView(activeView);
 
-    if (activeView === 'reception') {
-      receptionPortal = new ReceptionPortal(container, (targetView, pid) => {
-        navigateTo(targetView, pid);
-      });
-      if (patientId) {
-        receptionPortal.setTab('registry');
+    try {
+      if (activeView === 'reception') {
+        receptionPortal = new ReceptionPortal(container, (targetView, pid) => {
+          navigateTo(targetView, pid);
+        });
+        if (patientId) {
+          receptionPortal.setTab('registry');
+        }
+      } else if (activeView === 'doctor') {
+        doctorPortal = new DoctorPortal(container, (targetView, pid) => {
+          navigateTo(targetView, pid);
+        });
+        const docToSet = doctorId || activeDoctorId || currentUser.doctorId;
+        if (docToSet) {
+          doctorPortal.setDoctor(docToSet);
+        }
+        if (patientId) {
+          doctorPortal.setPatient(patientId);
+        }
+      } else if (activeView === 'billing') {
+        billingPortal = new BillingPortal(container, (targetView, pid) => {
+          navigateTo(targetView, pid);
+        });
+        if (patientId) {
+          billingPortal.setPatient(patientId);
+        }
+      } else if (activeView === 'records') {
+        recordsPortal = new RecordsPortal(container, (targetView, pid) => {
+          navigateTo(targetView, pid);
+        });
+      } else if (activeView === 'admin') {
+        adminPortal = new AdminPortal(container, (targetView, pid) => {
+          navigateTo(targetView, pid);
+        });
       }
-    } else if (activeView === 'doctor') {
-      doctorPortal = new DoctorPortal(container, (targetView, pid) => {
-        navigateTo(targetView, pid);
-      });
-      const docToSet = doctorId || activeDoctorId || currentUser.doctorId;
-      if (docToSet) {
-        doctorPortal.setDoctor(docToSet);
-      }
-      if (patientId) {
-        doctorPortal.setPatient(patientId);
-      }
-    } else if (activeView === 'billing') {
-      billingPortal = new BillingPortal(container, (targetView, pid) => {
-        navigateTo(targetView, pid);
-      });
-      if (patientId) {
-        billingPortal.setPatient(patientId);
-      }
-    } else if (activeView === 'records') {
-      recordsPortal = new RecordsPortal(container, (targetView, pid) => {
-        navigateTo(targetView, pid);
-      });
-    } else if (activeView === 'admin') {
-      adminPortal = new AdminPortal(container, (targetView, pid) => {
-        navigateTo(targetView, pid);
-      });
+    } catch (renderError) {
+      console.error('Portal Rendering Error:', renderError);
+      container.innerHTML = `
+        <div style="max-width: 500px; margin: 40px auto; padding: 24px; background: #ffffff; border: 1px solid #fca5a5; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.06); text-align: center;">
+          <div style="font-size: 3rem; margin-bottom: 12px;">🏥</div>
+          <h3 style="color: #991b1b; font-weight: 800; font-size: 1.2rem; margin: 0 0 8px 0;">Chaudhari Clinic HMS Recovery</h3>
+          <p style="color: #64748b; font-size: 0.88rem; margin: 0 0 20px 0; line-height: 1.4;">The portal encountered a minor interface state notice while updating.</p>
+          <div style="display: flex; gap: 10px; justify-content: center;">
+            <button type="button" onclick="window.location.reload()" style="background: #0f766e; color: #fff; border: none; padding: 10px 18px; border-radius: 8px; font-weight: 700; cursor: pointer;">🔄 Refresh Portal</button>
+            <button type="button" onclick="localStorage.removeItem('CSD_AUTHENTICATED_STAFF_V2'); window.location.reload();" style="background: #f1f5f9; color: #334155; border: 1px solid #cbd5e1; padding: 10px 18px; border-radius: 8px; font-weight: 700; cursor: pointer;">🔐 Re-Login</button>
+          </div>
+        </div>
+      `;
     }
   }
 
@@ -136,5 +151,12 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   }
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initApplication);
+} else {
+  initApplication();
+}
+
 

@@ -463,6 +463,18 @@ const SEED_PATIENTS = [
 ];
 
 export class HospitalDatabase {
+  formatDateYMD(d = new Date()) {
+    return formatDateYMD(d);
+  }
+
+  formatTime12(d = new Date()) {
+    return formatTime12(d);
+  }
+
+  getCurrentShift(d = new Date()) {
+    return getCurrentShift(d);
+  }
+
   constructor() {
     this.data = this.load();
     this.initCloudSync();
@@ -573,6 +585,11 @@ export class HospitalDatabase {
               return p;
             });
           }
+          if (!parsed.config) parsed.config = { ...INITIAL_HOSPITAL_CONFIG };
+          if (!Array.isArray(parsed.patients)) parsed.patients = [...SEED_PATIENTS];
+          if (!Array.isArray(parsed.pettyExpenses)) parsed.pettyExpenses = [];
+          if (!parsed.nextPatientNum) parsed.nextPatientNum = 1004;
+          if (!parsed.nextInvoiceNum) parsed.nextInvoiceNum = 1003;
           return parsed;
         }
       }
