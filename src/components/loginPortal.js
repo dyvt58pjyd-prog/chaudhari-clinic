@@ -163,7 +163,7 @@ export class LoginPortal {
       });
     }
 
-    // Quick Fill Buttons from Credentials Directory
+    // Quick Fill Buttons from Credentials Directory (Auto-submits for instant access)
     this.container.querySelectorAll('.btn-quick-fill').forEach(btn => {
       btn.addEventListener('click', () => {
         const u = btn.getAttribute('data-user');
@@ -173,8 +173,13 @@ export class LoginPortal {
         this.errorMessage = '';
         const alertEl = this.container.querySelector('#login-error-alert');
         if (alertEl) alertEl.remove();
-        if (passInput) passInput.focus();
         playClinicChime('click');
+        // Instant 1-tap login transition
+        setTimeout(() => {
+          if (form) {
+            form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+          }
+        }, 120);
       });
     });
 

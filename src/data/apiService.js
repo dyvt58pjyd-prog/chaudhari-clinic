@@ -20,6 +20,8 @@ class ApiService {
         this.isOnline = false;
         this.notifyStatus();
       });
+      // Immediate health check on initial app startup
+      setTimeout(() => this.checkHealth(), 50);
     }
   }
 

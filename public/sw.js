@@ -1,11 +1,12 @@
-// Service Worker for Chaudhari Clinic HMS (Android APK / PWA)
-const CACHE_NAME = 'chaudhari-hms-cache-v2';
+// Service Worker for Chaudhari Clinic HMS (Production & Android PWA)
+const CACHE_NAME = 'chaudhari-hms-cache-v3';
 const STATIC_ASSETS = [
   '/',
   '/index.html',
   '/manifest.json',
   '/icon-192.png',
   '/icon-512.png',
+  '/icon-maskable.png',
   '/screenshot-wide.jpg',
   '/screenshot-narrow.jpg'
 ];
@@ -13,7 +14,9 @@ const STATIC_ASSETS = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(STATIC_ASSETS).catch(() => {});
+      return cache.addAll(STATIC_ASSETS).catch((err) => {
+        console.warn('Pre-cache item note:', err);
+      });
     })
   );
   self.skipWaiting();
@@ -30,31 +33,55 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Only handle GET requests
   if (event.request.method !== 'GET') return;
 
-  // Let API requests go directly to network
-  if (event.request.url.includes('/api/')) {
+  const url = new URL(event.request.url);
+
+  // Never intercept API requests (always live to Neon DB)
+  if (url.pathname.startsWith('/api')) {
     return;
   }
 
-  event.respondWith(
-    fetch(event.request)
-      .then((response) => {
-        // Cache successful responses for offline support
-        if (response && response.status === 200 && response.type === 'basic') {
-          const responseClone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseClone);
-          });
-        }
-        return response;
-      })
-      .catch(() => {
-        return caches.match(event.request).then((cached) => {
-          return cached || caches.match('/');
+  // Never intercept Vite internal modules or dev server hot reloads
+  if (url.pathname.startsWith('/@') || url.pathname.includes('node_modules')) {
+    return;
+  }
+
+  // 1. Navigation requests (HTML pages): Network-first with offline fallback to /index.html
+  if (event.request.mode === 'navigate') {
+    event.respondWith(
+      fetch(event.request).catch(async () => {
+        const cached = await caches.match('/index.html') || await caches.match('/');
+        return cached || new Response('Offline: Chaudhari Clinic HMS will reload when connected.', {
+          headers: { 'Content-Type': 'text/html' }
         });
       })
+    );
+    return;
+  }
+
+  // 2. Static Assets (JS, CSS, images, fonts): Cache-first with background network update
+  event.respondWith(
+    caches.match(event.request).then((cachedResponse) => {
+      if (cachedResponse) {
+        // Refresh cache in background
+        fetch(event.request).then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const clone = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          }
+        }).catch(() => {});
+        return cachedResponse;
+      }
+
+      return fetch(event.request).then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+          const clone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+        }
+        return networkResponse;
+      });
+    })
   );
 });
 

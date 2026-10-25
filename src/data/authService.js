@@ -5,6 +5,7 @@ export const HOSPITAL_STAFF_ACCOUNTS = [
   {
     username: 'reception',
     password: 'reception@123',
+    passwords: ['reception@123', 'clinic@123', 'admin@123'],
     name: 'Reception Desk Staff',
     role: 'reception', // 'reception', 'doctor', 'admin'
     department: 'Patient Admissions & Billing Counter',
@@ -14,6 +15,7 @@ export const HOSPITAL_STAFF_ACCOUNTS = [
   {
     username: 'dr.rajnikant',
     password: 'skin@123',
+    passwords: ['skin@123', 'doctor@123'],
     name: 'Dr. Rajnikant Chaudhari',
     role: 'doctor',
     department: 'Dermatology, Trichology & Lasers',
@@ -23,6 +25,7 @@ export const HOSPITAL_STAFF_ACCOUNTS = [
   {
     username: 'dr.priyanka',
     password: 'dental@123',
+    passwords: ['dental@123', 'doctor@123'],
     name: 'Dr. Priyanka Chaudhari (Anekar)',
     role: 'doctor',
     department: 'Senior Dental Surgeon & Endodontist',
@@ -32,6 +35,7 @@ export const HOSPITAL_STAFF_ACCOUNTS = [
   {
     username: 'dr.rutika',
     password: 'pediatric@123',
+    passwords: ['pediatric@123', 'smile@123', 'doctor@123'],
     name: 'Dr. Rutika Tulaskar (Chaudhari)',
     role: 'doctor',
     department: 'Pediatric Dentistry & Smile Design',
@@ -41,6 +45,7 @@ export const HOSPITAL_STAFF_ACCOUNTS = [
   {
     username: 'doctor',
     password: 'doctor@123',
+    passwords: ['doctor@123', 'clinic@123'],
     name: 'Specialist Consulting Doctor',
     role: 'doctor',
     department: 'Clinical OPD Consultations',
@@ -50,6 +55,7 @@ export const HOSPITAL_STAFF_ACCOUNTS = [
   {
     username: 'pharmacy',
     password: 'pharmacy@123',
+    passwords: ['pharmacy@123', 'meds@123'],
     name: 'Medicare Pharmacy Desk',
     role: 'pharmacy',
     department: 'Live Prescription Dispensing Queue',
@@ -59,6 +65,7 @@ export const HOSPITAL_STAFF_ACCOUNTS = [
   {
     username: 'admin',
     password: 'admin@123',
+    passwords: ['admin@123', 'clinic@123'],
     name: 'Hospital Administrator',
     role: 'admin',
     department: 'Executive Administration & Accounts',
@@ -100,9 +107,12 @@ export class AuthService {
     const cleanUser = (username || '').trim().toLowerCase();
     const cleanPass = (password || '').trim();
 
-    const account = HOSPITAL_STAFF_ACCOUNTS.find(
-      acc => acc.username.toLowerCase() === cleanUser && acc.password === cleanPass
-    );
+    const account = HOSPITAL_STAFF_ACCOUNTS.find(acc => {
+      const matchUser = acc.username.toLowerCase() === cleanUser;
+      const validPasses = Array.isArray(acc.passwords) ? acc.passwords : [acc.password];
+      const matchPass = validPasses.includes(cleanPass) || acc.password === cleanPass;
+      return matchUser && matchPass;
+    });
 
     if (account) {
       this.currentUser = {

@@ -119,13 +119,22 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initial render
   renderCurrentView();
 
-  // Register Service Worker for Native Android PWA / APK Support
+  // Service Worker Registration for PWA & APK
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js').catch((err) => {
-        console.warn('Service worker registration note:', err);
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      // Clean up dev server cache in local environment
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        for (let reg of regs) reg.unregister();
       });
-    });
+    } else {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then((reg) => {
+          reg.update();
+        }).catch((err) => {
+          console.warn('Service worker registration note:', err);
+        });
+      });
+    }
   }
 });
 
