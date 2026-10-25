@@ -1,12 +1,14 @@
 // Neon Database Connection & Auto-Migration Helper for Vercel Serverless
 import { neon } from '@neondatabase/serverless';
-import 'dotenv/config';
+import dotenv from 'dotenv';
+dotenv.config({ path: ['.env.local', '.env'] });
 
 let isSchemaInitialized = false;
 
 export function getDatabaseUrl() {
   return (
     process.env.DATABASE_URL ||
+    process.env.DATABASE_URL_UNPOOLED ||
     process.env.NEON_DATABASE_URL ||
     process.env.POSTGRES_URL ||
     process.env.POSTGRES_PRISMA_URL ||

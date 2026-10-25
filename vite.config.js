@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
-import 'dotenv/config';
+import dotenv from 'dotenv';
+dotenv.config({ path: ['.env.local', '.env'] });
 
 // Vite dev server API middleware to handle serverless endpoints locally
 function neonApiPlugin() {

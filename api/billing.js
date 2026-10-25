@@ -25,15 +25,21 @@ export default async function handler(req, res) {
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
     const {
       patientId,
-      paymentMethod, // 'UPI' or 'Cash'
+      paymentMethod,
+      paymentMode,
       paidToday = null,
+      paidAmount = null,
       cashTendered = 0,
       cashChange = 0,
       upiTxnRef = '',
+      upiRef = '',
       billedBy = 'Reception Staff Desk'
     } = body;
 
-    if (!patientId || !paymentMethod) {
+    const method = paymentMethod || paymentMode;
+    const payment = paidToday !== null ? paidToday : paidAmount;
+
+    if (!patientId || !method) {
       return res.status(400).json({ error: 'patientId and paymentMethod are required.' });
     }
 
@@ -46,7 +52,7 @@ export default async function handler(req, res) {
     const existingBilling = typeof patient.billing === 'string' ? JSON.parse(patient.billing) : (patient.billing || {});
 
     const total = existingBilling.totalAmount || 400;
-    const amountPaid = paidToday !== null ? parseFloat(paidToday) : total;
+    const amountPaid = payment !== null ? parseFloat(payment) : total;
     const pending = Math.max(0, total - amountPaid);
 
     const now = new Date();
@@ -57,15 +63,16 @@ export default async function handler(req, res) {
 
     const updatedBilling = {
       ...existingBilling,
-      paymentMethod,
+      paymentMethod: method,
       paidAmount: amountPaid,
       pendingBalance: pending,
+      status: pending === 0 ? 'Paid' : 'Partial',
       paymentStatus: pending === 0 ? 'Paid' : 'Partial',
       billedAt: formattedDate,
       billedBy,
       cashTendered,
       cashChange,
-      upiTxnRef: upiTxnRef || (paymentMethod === 'UPI' ? `UPI-${Date.now().toString().slice(-8)}` : '')
+      upiTxnRef: upiTxnRef || upiRef || (method === 'UPI' ? `UPI-${Date.now().toString().slice(-8)}` : '')
     };
 
     await sql`
