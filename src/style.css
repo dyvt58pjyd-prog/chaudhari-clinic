@@ -3572,4 +3572,285 @@ button,
   word-break: break-all;
 }
 
+/* ==========================================================================
+   MOBILE & TABLET TOUCH-OPTIMIZED ENHANCEMENTS
+   ========================================================================== */
+
+/* 1. Mobile Quick Role Selector Bar */
+.mobile-quick-role-bar {
+  background: linear-gradient(135deg, #f0fdfa 0%, #e0f2fe 100%);
+  border: 1.5px solid #99f6e4;
+  border-radius: var(--radius-md);
+  padding: 12px;
+  margin-bottom: 14px;
+}
+
+.mq-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.mq-badge {
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 0.70rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: var(--radius-full);
+}
+
+.mq-pills-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.btn-role-quick-pill {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  color: #0f172a;
+  padding: 8px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  touch-action: manipulation;
+  transition: all 0.15s ease;
+}
+
+.btn-role-quick-pill:hover,
+.btn-role-quick-pill:active {
+  background: var(--primary-light);
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(15, 118, 110, 0.15);
+}
+
+/* 2. Doctor Portal Mobile Segmented Tabs */
+.doc-mobile-view-tabs {
+  display: none;
+  background: #e2e8f0;
+  padding: 4px;
+  border-radius: var(--radius-md);
+  margin-bottom: 14px;
+  gap: 6px;
+  position: sticky;
+  top: 60px;
+  z-index: 40;
+}
+
+@media (max-width: 991px) {
+  .doc-mobile-view-tabs {
+    display: flex;
+  }
+}
+
+.doc-m-tab-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 14px;
+  border: none;
+  background: transparent;
+  color: var(--text-sub);
+  font-size: 0.88rem;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: all 0.15s ease;
+  min-height: 46px;
+}
+
+.doc-m-tab-btn.active {
+  background: #ffffff;
+  color: var(--primary);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  font-weight: 800;
+}
+
+.doc-m-badge {
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.mobile-back-queue-row {
+  display: none;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 991px) {
+  .mobile-back-queue-row {
+    display: block;
+  }
+}
+
+.btn-back-to-queue {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #0f172a;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 8px 14px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.btn-back-to-queue:hover,
+.btn-back-to-queue:active {
+  background: var(--primary-light);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* 3. Responsive visibility switching for Doctor Portal on Mobile/Tablet */
+@media (max-width: 991px) {
+  .doctor-main-grid.show-queue-mobile .doc-workspace-card {
+    display: none !important;
+  }
+  .doctor-main-grid.show-queue-mobile .doc-queue-card {
+    display: block !important;
+    width: 100% !important;
+  }
+  .doctor-main-grid.show-workspace-mobile .doc-queue-card {
+    display: none !important;
+  }
+  .doctor-main-grid.show-workspace-mobile .doc-workspace-card {
+    display: block !important;
+    width: 100% !important;
+  }
+}
+
+@media (min-width: 992px) {
+  .doctor-main-grid .doc-queue-card,
+  .doctor-main-grid .doc-workspace-card {
+    display: block !important;
+  }
+}
+
+/* 4. Global Touch Optimization & iOS Safari Auto-Zoom Fix */
+@media (max-width: 768px) {
+  body.hospital-app-body {
+    padding-bottom: calc(84px + env(safe-area-inset-bottom, 16px));
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea,
+  input[type="text"],
+  input[type="tel"],
+  input[type="number"],
+  input[type="password"] {
+    font-size: 16px !important; /* Prevents iOS Safari input auto-zoom */
+    min-height: 48px;
+    padding: 12px 14px;
+  }
+
+  .btn {
+    min-height: 48px;
+    padding: 12px 18px;
+    font-size: 0.95rem;
+    touch-action: manipulation;
+  }
+
+  .btn-icon-xs,
+  .btn-icon-sm {
+    min-width: 44px;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .tab-pill {
+    flex: 1;
+    min-height: 48px;
+    justify-content: center;
+  }
+
+  .android-bottom-nav {
+    padding-bottom: max(10px, env(safe-area-inset-bottom, 12px));
+    height: auto;
+    min-height: 64px;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(12px);
+  }
+
+  .android-nav-item {
+    padding: 8px 12px;
+    min-width: 64px;
+    min-height: 52px;
+  }
+
+  .login-card-content {
+    padding: 18px 16px;
+  }
+
+  .login-brand-header {
+    padding: 18px 16px;
+  }
+
+  .login-crest-icon {
+    display: none;
+  }
+
+  .login-hospital-name {
+    font-size: 1.15rem;
+  }
+
+  .queue-patient-item {
+    padding: 14px 12px;
+    margin-bottom: 6px;
+    touch-action: manipulation;
+  }
+
+  .doc-radio-card {
+    padding: 14px 12px;
+    min-height: 54px;
+  }
+
+  /* Table Horizontal Scrolling with Smooth Touch */
+  .table-responsive-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: var(--radius-md);
+  }
+
+  .khamgaon-chips-row {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .btn-locality-chip {
+    flex-shrink: 0;
+    min-height: 38px;
+    padding: 8px 12px;
+  }
+}
+
 

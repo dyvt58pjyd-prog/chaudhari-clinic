@@ -120,6 +120,7 @@ export class DoctorPortal {
     this.activeAlerts = [];
     this.dentalLabStatus = 'No Lab Work';
     this.dentalLabName = '';
+    this.mobileTab = 'queue';
 
     this.render();
   }
@@ -133,6 +134,7 @@ export class DoctorPortal {
 
   setPatient(patientId) {
     this.selectedPatientId = patientId;
+    this.mobileTab = 'workspace';
     const p = hospitalDb.getPatientById(patientId);
     if (p) {
       this.activeDoctorId = p.assignedDoctorId || this.activeDoctorId;
@@ -203,7 +205,17 @@ export class DoctorPortal {
           `}
         </div>
 
-        <div class="doctor-main-grid">
+        <!-- Mobile & Tablet Segmented View Tabs -->
+        <div class="doc-mobile-view-tabs">
+          <button type="button" class="doc-m-tab-btn ${this.mobileTab === 'queue' ? 'active' : ''}" id="btn-doc-tab-queue">
+            👥 Patient Queue <span class="doc-m-badge">${waitingPatients.length}</span>
+          </button>
+          <button type="button" class="doc-m-tab-btn ${this.mobileTab === 'workspace' ? 'active' : ''}" id="btn-doc-tab-workspace">
+            🩺 Active Checkup ${selectedPatient ? `• ${selectedPatient.name.split(' ')[0]}` : ''}
+          </button>
+        </div>
+
+        <div class="doctor-main-grid ${this.mobileTab === 'workspace' ? 'show-workspace-mobile' : 'show-queue-mobile'}">
           <!-- Left Column: Doctor's Queue of Patients -->
           <div class="doc-queue-card">
             <div class="queue-card-head">
@@ -259,6 +271,13 @@ export class DoctorPortal {
               </div>
             ` : `
               <div class="active-checkup-form-wrap animate-fade-in">
+                <!-- Mobile Back Button -->
+                <div class="mobile-back-queue-row">
+                  <button type="button" class="btn-back-to-queue" id="btn-back-to-queue-mobile">
+                    ← Back to Patient Queue (${waitingPatients.length} Waiting)
+                  </button>
+                </div>
+
                 <!-- Patient Banner -->
                 <div class="patient-consult-banner ${selectedPatient.isEmergency ? 'emergency-banner' : ''}">
                   <div>
@@ -873,6 +892,49 @@ export class DoctorPortal {
   }
 
   bindEvents(selectedPatient, activeDoctor, config) {
+    // 1. Mobile Segmented Tab Controls
+    const btnTabQ = this.container.querySelector('#btn-doc-tab-queue');
+    const btnTabW = this.container.querySelector('#btn-doc-tab-workspace');
+    if (btnTabQ) {
+      btnTabQ.addEventListener('click', () => {
+        this.mobileTab = 'queue';
+        this.render();
+      });
+    }
+    if (btnTabW) {
+      btnTabW.addEventListener('click', () => {
+        this.mobileTab = 'workspace';
+        this.render();
+      });
+    }
+
+    const btnBackQ = this.container.querySelector('#btn-back-to-queue-mobile');
+    if (btnBackQ) {
+      btnBackQ.addEventListener('click', () => {
+        this.mobileTab = 'queue';
+        this.render();
+      });
+    }
+
+    // 2. Doctor Switcher Pills
+    this.container.querySelectorAll('.doc-tab-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const docId = btn.getAttribute('data-id');
+        this.setDoctor(docId);
+      });
+    });
+
+    // 3. Queue Patient Click Selection (Both Waiting and Consulted)
+    this.container.querySelectorAll('.queue-patient-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const pid = item.getAttribute('data-id');
+        if (pid) {
+          playClinicChime('click');
+          this.setPatient(pid);
+        }
+      });
+    });
+
     if (!selectedPatient) return;
 
     this.renderMedicineRows();

@@ -50,7 +50,35 @@ export class LoginPortal {
               </div>
             ` : ''}
 
-            <form id="hospital-login-form" class="login-form">
+            <!-- 1-Tap Fast Login for Mobile & Tablet -->
+            <div class="mobile-quick-role-bar">
+              <div class="mq-header">
+                <span class="mq-badge">⚡ 1-Tap Instant Login</span>
+                <span class="text-xs text-muted">Tap your role to enter immediately:</span>
+              </div>
+              <div class="mq-pills-scroll">
+                <button type="button" class="btn-role-quick-pill" data-user="reception" data-pass="clinic@123">
+                  👩‍💼 <strong>Reception</strong>
+                </button>
+                <button type="button" class="btn-role-quick-pill" data-user="dr.rajnikant" data-pass="skin@123">
+                  👨‍⚕️ <strong>Dr. Rajnikant</strong>
+                </button>
+                <button type="button" class="btn-role-quick-pill" data-user="dr.priyanka" data-pass="dental@123">
+                  👩‍⚕️ <strong>Dr. Priyanka</strong>
+                </button>
+                <button type="button" class="btn-role-quick-pill" data-user="dr.rutika" data-pass="smile@123">
+                  👩‍⚕️ <strong>Dr. Rutika</strong>
+                </button>
+                <button type="button" class="btn-role-quick-pill" data-user="pharmacy" data-pass="meds@123">
+                  💊 <strong>Pharmacy</strong>
+                </button>
+                <button type="button" class="btn-role-quick-pill" data-user="admin" data-pass="admin@123">
+                  🛡️ <strong>Admin</strong>
+                </button>
+              </div>
+            </div>
+
+            <form id="hospital-login-form" class="login-form mt-3">
               <div class="form-group-field">
                 <label for="login-username" class="form-label-bold">
                   Username <span class="req">*</span>
@@ -162,6 +190,25 @@ export class LoginPortal {
         }
       });
     }
+
+    // 1-Tap Quick Staff Role Pills (Immediate one-touch login)
+    this.container.querySelectorAll('.btn-role-quick-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const u = btn.getAttribute('data-user');
+        const p = btn.getAttribute('data-pass');
+        if (userInput) userInput.value = u;
+        if (passInput) passInput.value = p;
+        this.errorMessage = '';
+        const alertEl = this.container.querySelector('#login-error-alert');
+        if (alertEl) alertEl.remove();
+        playClinicChime('click');
+        setTimeout(() => {
+          if (form) {
+            form.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+          }
+        }, 100);
+      });
+    });
 
     // Quick Fill Buttons from Credentials Directory (Auto-submits for instant access)
     this.container.querySelectorAll('.btn-quick-fill').forEach(btn => {
