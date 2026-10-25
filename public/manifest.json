@@ -6,6 +6,15 @@
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
+  "display_override": [
+    "window-controls-overlay",
+    "standalone",
+    "minimal-ui"
+  ],
+  "prefer_related_applications": false,
+  "launch_handler": {
+    "client_mode": "auto"
+  },
   "orientation": "any",
   "dir": "ltr",
   "lang": "en-IN",
