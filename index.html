@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#0f766e" />
+    <title>Chaudhari Clinic • Hospital Management & Clinical EMR System</title>
+    <meta name="description" content="Hospital internal management system for Chaudhari Skin and Dental Care Multispeciality Clinic & Medicare Pharmacy, Khamgaon. Admissions, Unique Patient ID, Doctor Checkup Notes, Prescriptions, and Cash/UPI QR Billing." />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='24' fill='%230f766e'/><path d='M50 20v60M20 50h60' stroke='%23ffffff' stroke-width='14' stroke-linecap='round'/></svg>" />
+
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  </head>
+  <body class="hospital-app-body">
+    <!-- Android / Desktop App Bar Container -->
+    <header class="hospital-header-root" id="app-header-mount"></header>
+
+    <!-- Main Dynamic Application Viewport Container -->
+    <main class="hospital-viewport-root" id="app-viewport">
+      <!-- Portals injected dynamically based on active role/navigation -->
+    </main>
+
+    <!-- Android Mobile/Tablet Sticky Bottom Bar Container -->
+    <nav class="hospital-bottom-nav-root" id="app-bottom-nav"></nav>
+
+    <!-- Main Module Script -->
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

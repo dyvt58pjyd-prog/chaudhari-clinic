@@ -1,0 +1,19 @@
+{
+  "name": "Chaudhari Skin & Dental Care HMS",
+  "short_name": "Chaudhari HMS",
+  "description": "Hospital Management System, Clinical EMR & Medicare Pharmacy for Chaudhari Clinic Khamgaon",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#0f766e",
+  "orientation": "any",
+  "categories": ["medical", "health", "business"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
