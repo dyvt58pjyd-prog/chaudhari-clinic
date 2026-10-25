@@ -35,7 +35,7 @@ export class WhatsAppWidget {
         <div class="wa-popup-body">
           <div class="wa-message-bubble">
             <p>Namaste! 🙏 Welcome to <strong>Chaudhari Skin & Dental Care Multispeciality Clinic</strong>, Khamgaon.</p>
-            <p class="text-xs text-muted" style="margin-top: 4px;">Choose a topic below or chat directly with our official reception & pharmacy desk (+91 90498 83983):</p>
+            <p class="text-xs text-muted" style="margin-top: 4px;">Choose a topic below or chat directly with our official reception desk (+91 90498 83983):</p>
           </div>
 
           <div class="wa-quick-options">
@@ -51,8 +51,8 @@ export class WhatsAppWidget {
             <button type="button" class="wa-opt-btn alert-opt" data-msg="URGENT: I am experiencing severe toothache / emergency dental pain and need a same-day priority slot in Khamgaon.">
               🚨 Emergency Acute Dental Pain Slot
             </button>
-            <button type="button" class="wa-opt-btn" data-msg="Hi Medicare Pharmacy at Chaudhari Clinic, I would like to inquire about prescription medicines or availability.">
-              💊 Medicare Pharmacy Prescription Inquiry
+            <button type="button" class="wa-opt-btn" data-msg="Hi Chaudhari Clinic Khamgaon, I have a general inquiry regarding clinic timings, OPD token status, or billing.">
+              📋 General Reception & OPD Token Inquiry
             </button>
           </div>
         </div>

@@ -109,6 +109,10 @@ export class DoctorPortal {
     this.selectedPatientId = null;
     this.medicineRows = [];
     
+    // Patient Queue Search & Filter state
+    this.searchQuery = '';
+    this.queueFilter = 'all'; // 'all' or doctorId
+
     // Selective Medicine Box state
     this.formularySearchQuery = '';
     this.formularyCategory = 'all';
@@ -127,8 +131,6 @@ export class DoctorPortal {
 
   setDoctor(docId) {
     this.activeDoctorId = docId;
-    this.selectedPatientId = null;
-    this.medicineRows = [];
     this.render();
   }
 
@@ -137,7 +139,9 @@ export class DoctorPortal {
     this.mobileTab = 'workspace';
     const p = hospitalDb.getPatientById(patientId);
     if (p) {
-      this.activeDoctorId = p.assignedDoctorId || this.activeDoctorId;
+      if (p.assignedDoctorId) {
+        this.activeDoctorId = p.assignedDoctorId;
+      }
       this.activeAlerts = p.criticalAlerts ? [...p.criticalAlerts] : [];
       if (p.dentalLab) {
         this.dentalLabStatus = p.dentalLab.status || 'No Lab Work';
@@ -153,23 +157,49 @@ export class DoctorPortal {
       }
     }
     this.render();
+
+    // Auto-scroll to workspace on mobile/tablet for smooth UX
+    setTimeout(() => {
+      const ws = this.container.querySelector('.doc-workspace-card');
+      if (ws) ws.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 50);
   }
 
   render() {
     const currentUser = authService.getCurrentUser();
-    if (currentUser && currentUser.doctorId && this.activeDoctorId !== currentUser.doctorId) {
+    if (!this.activeDoctorId && currentUser && currentUser.doctorId) {
       this.activeDoctorId = currentUser.doctorId;
     }
 
-    const patients = hospitalDb.getAllPatients();
+    const allPatients = hospitalDb.getAllPatients();
     const config = hospitalDb.getConfig();
     const activeDoctor = DOCTORS_ROSTER.find(d => d.id === this.activeDoctorId) || DOCTORS_ROSTER[0];
 
-    const docPatients = patients.filter(p => p.assignedDoctorId === this.activeDoctorId);
-    const waitingPatients = docPatients.filter(p => p.status === 'Waiting for Doctor');
-    const completedPatients = docPatients.filter(p => p.status === 'Prescription Ready' || p.status === 'Billing Completed');
+    // Filter patients by Doctor filter AND Real-Time Search Query (Name or Mobile)
+    const q = (this.searchQuery || '').trim().toLowerCase();
+    const filteredPatients = allPatients.filter(p => {
+      const matchesDoc = this.queueFilter === 'all' || p.assignedDoctorId === this.queueFilter;
+      let matchesSearch = true;
+      if (q) {
+        const nameMatch = p.name && p.name.toLowerCase().includes(q);
+        const phoneMatch = p.phone && p.phone.includes(q);
+        const idMatch = p.patientId && p.patientId.toLowerCase().includes(q);
+        const tokenMatch = p.tokenNo && String(p.tokenNo).includes(q);
+        matchesSearch = nameMatch || phoneMatch || idMatch || tokenMatch;
+      }
+      return matchesDoc && matchesSearch;
+    });
 
-    const selectedPatient = this.selectedPatientId ? patients.find(p => p.patientId === this.selectedPatientId) : null;
+    const waitingPatients = filteredPatients.filter(p => p.status === 'Waiting for Doctor');
+    const completedPatients = filteredPatients.filter(p => p.status === 'Prescription Ready' || p.status === 'Billing Completed');
+
+    // Counts for filter pills
+    const allWaitingTotal = allPatients.filter(p => p.status === 'Waiting for Doctor').length;
+    const doc1Waiting = allPatients.filter(p => p.assignedDoctorId === 'dr-rajnikant' && p.status === 'Waiting for Doctor').length;
+    const doc2Waiting = allPatients.filter(p => p.assignedDoctorId === 'dr-priyanka' && p.status === 'Waiting for Doctor').length;
+    const doc3Waiting = allPatients.filter(p => p.assignedDoctorId === 'dr-rutika' && p.status === 'Waiting for Doctor').length;
+
+    const selectedPatient = this.selectedPatientId ? allPatients.find(p => p.patientId === this.selectedPatientId) : null;
 
     this.container.innerHTML = `
       <div class="doctor-portal-layout">
@@ -178,31 +208,21 @@ export class DoctorPortal {
           <div>
             <div class="section-tag-pill teal">Doctor Consultation & Clinical EMR</div>
             <h2 class="portal-title">Clinical Checkup Notes & Digital Prescription</h2>
-            <p class="portal-subtitle">Safety Alerts • 1-Line RVG ID • Selective Formulary • Real-Time Reception & Pharmacy Sync</p>
+            <p class="portal-subtitle">Safety Alerts • 1-Line RVG ID • Selective Formulary • Real-Time Reception & Billing Sync</p>
           </div>
 
-          <!-- Doctor Identity or Admin Audit Selector -->
-          ${currentUser && currentUser.doctorId ? `
-            <div class="doctor-identity-badge">
-              <span class="doc-avatar-dot">👨‍⚕️</span>
-              <div class="text-left">
-                <strong>${activeDoctor.name}</strong>
-                <span class="text-xs block text-muted">${activeDoctor.specialty} • ${activeDoctor.room}</span>
-              </div>
-            </div>
-          ` : `
-            <div class="doctor-switcher-pills">
-              ${DOCTORS_ROSTER.map(doc => `
-                <button type="button" class="doc-tab-pill ${doc.id === this.activeDoctorId ? 'active' : ''}" data-id="${doc.id}">
-                  <span class="doc-avatar-dot">👨‍⚕️</span>
-                  <div class="text-left">
-                    <strong>${doc.name.split(' ')[1]}</strong>
-                    <span class="text-xs block text-muted">${doc.department.split('&')[0]}</span>
-                  </div>
-                </button>
-              `).join('')}
-            </div>
-          `}
+          <!-- Doctor Switcher Pills (Always accessible to switch cabins) -->
+          <div class="doctor-switcher-pills">
+            ${DOCTORS_ROSTER.map(doc => `
+              <button type="button" class="doc-tab-pill ${doc.id === this.activeDoctorId ? 'active' : ''}" data-id="${doc.id}">
+                <span class="doc-avatar-dot">👨‍⚕️</span>
+                <div class="text-left">
+                  <strong>${doc.name.split(' ')[1]}</strong>
+                  <span class="text-xs block text-muted">${doc.department.split('&')[0]}</span>
+                </div>
+              </button>
+            `).join('')}
+          </div>
         </div>
 
         <!-- Mobile & Tablet Segmented View Tabs -->
@@ -216,46 +236,109 @@ export class DoctorPortal {
         </div>
 
         <div class="doctor-main-grid ${this.mobileTab === 'workspace' ? 'show-workspace-mobile' : 'show-queue-mobile'}">
-          <!-- Left Column: Doctor's Queue of Patients -->
+          <!-- Left Column: Compact Searchable Patient Queue -->
           <div class="doc-queue-card">
             <div class="queue-card-head">
-              <h3 class="card-title">${activeDoctor.name}</h3>
-              <p class="text-xs text-muted">${activeDoctor.specialty} • ${activeDoctor.room}</p>
-              <div class="queue-count-badge mt-2">
-                <span class="pulse-dot"></span> ${waitingPatients.length} Patients in Line
+              <div class="flex items-center justify-between">
+                <div>
+                  <h3 class="card-title text-base">OPD Queue & Directory</h3>
+                  <p class="text-xs text-muted">Consulting Cabin: <strong>${activeDoctor.name.split(' ')[1]}</strong> (${activeDoctor.room})</p>
+                </div>
+                <div class="queue-count-badge">
+                  <span class="pulse-dot"></span> <strong>${waitingPatients.length}</strong> Waiting
+                </div>
+              </div>
+
+              <!-- Real-Time Patient Search Bar by Name or Mobile -->
+              <div class="doc-queue-search-wrap mt-2">
+                <span class="search-icon">🔍</span>
+                <input 
+                  type="text" 
+                  id="doc-queue-search-input" 
+                  class="form-input form-input-sm" 
+                  placeholder="Search by Patient Name or Mobile..." 
+                  value="${this.searchQuery}" 
+                  autocomplete="off"
+                />
+                ${this.searchQuery ? `<button type="button" class="search-clear-btn" id="btn-clear-doc-search">✕</button>` : ''}
+              </div>
+
+              <!-- Queue Doctor Filter Pills -->
+              <div class="doc-queue-filter-pills mt-2">
+                <button type="button" class="q-filter-pill ${this.queueFilter === 'all' ? 'active' : ''}" data-filter="all">
+                  All Waiting (${allWaitingTotal})
+                </button>
+                <button type="button" class="q-filter-pill ${this.queueFilter === 'dr-rajnikant' ? 'active' : ''}" data-filter="dr-rajnikant">
+                  Dr. Rajnikant (${doc1Waiting})
+                </button>
+                <button type="button" class="q-filter-pill ${this.queueFilter === 'dr-priyanka' ? 'active' : ''}" data-filter="dr-priyanka">
+                  Dr. Priyanka (${doc2Waiting})
+                </button>
+                <button type="button" class="q-filter-pill ${this.queueFilter === 'dr-rutika' ? 'active' : ''}" data-filter="dr-rutika">
+                  Dr. Rutika (${doc3Waiting})
+                </button>
               </div>
             </div>
 
             <div class="doc-patients-scroller">
-              <div class="queue-section-label">Waiting for Checkup:</div>
+              <div class="queue-section-label">Waiting for Checkup (${waitingPatients.length}):</div>
               ${waitingPatients.length === 0 ? `
                 <div class="empty-queue-box">
                   <span>✓</span>
-                  <p>No waiting patients in this cabin right now.</p>
+                  <p>${this.searchQuery ? `No patient matches "${this.searchQuery}"` : 'No waiting patients in this queue right now.'}</p>
                 </div>
               ` : waitingPatients.map(p => `
-                <div class="queue-patient-item ${p.isEmergency ? 'emergency-item' : ''} ${p.patientId === this.selectedPatientId ? 'selected' : ''}" data-id="${p.patientId}">
-                  <div class="qp-top">
-                    <span class="qp-id font-bold">${p.patientId}</span>
-                    <span class="qp-token">Token #${p.tokenNo}</span>
+                <div class="compact-queue-row ${p.isEmergency ? 'emergency-row' : ''} ${p.patientId === this.selectedPatientId ? 'selected' : ''}" data-id="${p.patientId}">
+                  <div class="cqr-left">
+                    <div class="cqr-token-pill ${p.isEmergency ? 'emergency' : ''}">
+                      #${p.tokenNo}
+                    </div>
+                    <div class="cqr-info">
+                      <div class="cqr-name-line">
+                        <strong class="cqr-name">${p.name}</strong>
+                        ${p.isEmergency ? `<span class="cqr-badge-red">🚨 EMERGENCY</span>` : ''}
+                      </div>
+                      <div class="cqr-sub-line">
+                        <span class="cqr-meta">${p.age}y • ${p.gender}</span>
+                        <span class="cqr-sep">•</span>
+                        <span class="cqr-phone font-mono">📞 ${p.phone}</span>
+                        <span class="cqr-sep">•</span>
+                        <span class="cqr-doc-chip ${p.assignedDoctorId}">${p.assignedDoctorId === 'dr-priyanka' ? 'Dr. Priyanka' : p.assignedDoctorId === 'dr-rutika' ? 'Dr. Rutika' : 'Dr. Rajnikant'}</span>
+                      </div>
+                    </div>
                   </div>
-                  <strong class="qp-name">${p.name}</strong>
-                  ${p.isEmergency ? `<span class="emergency-tag-inline">🚨 EMERGENCY PRIORITY</span>` : ''}
-                  <div class="qp-meta">${p.age}y • ${p.gender} • +91 ${p.phone}</div>
-                  <div class="qp-address text-xs text-muted">${p.address}</div>
-                  ${p.reason ? `<div class="qp-reason text-xs">"${p.reason}"</div>` : ''}
+                  <div class="cqr-right">
+                    <button type="button" class="btn-attend-patient ${p.patientId === this.selectedPatientId ? 'consulting' : ''}" data-id="${p.patientId}">
+                      ${p.patientId === this.selectedPatientId ? '✓ Consulting' : 'Attend / Write Rx →'}
+                    </button>
+                  </div>
                 </div>
               `).join('')}
 
-              <div class="queue-section-label mt-4">Consulted Today (${completedPatients.length}):</div>
-              ${completedPatients.slice(0, 5).map(cp => `
-                <div class="queue-patient-item completed ${cp.patientId === this.selectedPatientId ? 'selected' : ''}" data-id="${cp.patientId}">
-                  <div class="qp-top">
-                    <span class="qp-id">${cp.patientId}</span>
-                    <span class="status-tag-sm">${cp.status}</span>
+              <div class="queue-section-label mt-3">Consulted Today (${completedPatients.length}):</div>
+              ${completedPatients.slice(0, 8).map(cp => `
+                <div class="compact-queue-row completed ${cp.patientId === this.selectedPatientId ? 'selected' : ''}" data-id="${cp.patientId}">
+                  <div class="cqr-left">
+                    <div class="cqr-token-pill done">✓</div>
+                    <div class="cqr-info">
+                      <div class="cqr-name-line">
+                        <strong class="cqr-name">${cp.name}</strong>
+                        <span class="status-tag-sm">${cp.status}</span>
+                      </div>
+                      <div class="cqr-sub-line">
+                        <span class="cqr-meta">${cp.age}y • ${cp.gender}</span>
+                        <span class="cqr-sep">•</span>
+                        <span class="cqr-phone font-mono">${cp.phone}</span>
+                        <span class="cqr-sep">•</span>
+                        <span class="text-xs text-muted">${cp.clinicalNotes?.diagnosis || 'Consulted'}</span>
+                      </div>
+                    </div>
                   </div>
-                  <strong class="qp-name">${cp.name}</strong>
-                  <div class="text-xs text-muted">${cp.clinicalNotes ? cp.clinicalNotes.diagnosis : 'Consulted'}</div>
+                  <div class="cqr-right">
+                    <button type="button" class="btn-attend-patient completed-btn" data-id="${cp.patientId}">
+                      ${cp.patientId === this.selectedPatientId ? '✓ Open' : 'View Rx →'}
+                    </button>
+                  </div>
                 </div>
               `).join('')}
             </div>
@@ -540,7 +623,7 @@ export class DoctorPortal {
                   <div class="form-section-card mt-4">
                     <div class="sec-title">
                       <span class="sec-num">3</span>
-                      <h4>Billing Charges Forward to Reception & Pharmacy</h4>
+                      <h4>Billing Charges Forward to Reception Desk</h4>
                     </div>
 
                     <div class="form-row-grid">
@@ -552,11 +635,6 @@ export class DoctorPortal {
                       <div class="form-field">
                         <label for="doc-procedure-fee">Clinical Procedure / Treatment Fee (₹)</label>
                         <input type="number" id="doc-procedure-fee" class="form-input" value="${selectedPatient.billing ? selectedPatient.billing.procedureFee : 0}" min="0" placeholder="0" />
-                      </div>
-
-                      <div class="form-field">
-                        <label for="doc-medicine-fee">Estimated Medicare Pharmacy Fee (₹)</label>
-                        <input type="number" id="doc-medicine-fee" class="form-input" value="${selectedPatient.billing ? selectedPatient.billing.medicineFee : 0}" min="0" placeholder="0" />
                       </div>
                     </div>
                   </div>
@@ -924,12 +1002,43 @@ export class DoctorPortal {
       });
     });
 
-    // 3. Queue Patient Click Selection (Both Waiting and Consulted)
-    this.container.querySelectorAll('.queue-patient-item').forEach(item => {
-      item.addEventListener('click', () => {
-        const pid = item.getAttribute('data-id');
+    // 3. Queue Real-time Search Input
+    const queueSearchInput = this.container.querySelector('#doc-queue-search-input');
+    const btnClearSearch = this.container.querySelector('#btn-clear-doc-search');
+    if (queueSearchInput) {
+      queueSearchInput.addEventListener('input', (e) => {
+        this.searchQuery = e.target.value;
+        this.render();
+        const reSearch = this.container.querySelector('#doc-queue-search-input');
+        if (reSearch) {
+          reSearch.focus();
+          reSearch.setSelectionRange(reSearch.value.length, reSearch.value.length);
+        }
+      });
+    }
+    if (btnClearSearch) {
+      btnClearSearch.addEventListener('click', () => {
+        this.searchQuery = '';
+        this.render();
+      });
+    }
+
+    // 4. Queue Doctor Filter Pills
+    this.container.querySelectorAll('.q-filter-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        this.queueFilter = pill.getAttribute('data-filter');
+        this.render();
+      });
+    });
+
+    // 5. Queue Patient 1-Tap Click Selection (Works on Mobile, Tablet & Desktop)
+    this.container.querySelectorAll('.compact-queue-row, .btn-attend-patient').forEach(el => {
+      el.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const pid = el.getAttribute('data-id') || el.closest('[data-id]')?.getAttribute('data-id');
         if (pid) {
           playClinicChime('click');
+          notificationEngine.vibrate(50);
           this.setPatient(pid);
         }
       });
@@ -1125,12 +1234,12 @@ export class DoctorPortal {
         const diag = this.container.querySelector('#doc-diagnosis').value || 'उपचार';
         const advice = this.container.querySelector('#doc-special-advice').value || 'औषधे वेळेवर घ्या';
         const msg = encodeURIComponent(
-          `*चौधरी स्किन अँड डेंटल केअर क्लिनिक व मेडिकेअर फार्मसी, खामगाव*\n\n` +
+          `*चौधरी स्किन ॲन्ड डेंटल केअर क्लिनिक, खामगाव*\n\n` +
           `नमस्ते ${selectedPatient.name},\n` +
           `तुमची तपासणी पूर्ण झाली आहे.\n` +
           `*निदान:* ${diag}\n` +
           `*महत्त्वाच्या सूचना:* ${advice}\n\n` +
-          `औषधे क्लिनिकमधील मेडिकेअर फार्मसीमधून वेळेवर घ्या.\n` +
+          `औषधे वेळेवर व डॉक्टरांच्या सल्ल्यानुसार नियमितपणे घ्यावीत.\n` +
           `काही त्रास झाल्यास तात्काळ संपर्क करा: +91 90498 83983`
         );
         window.open(`https://wa.me/91${selectedPatient.phone}?text=${msg}`, '_blank');
@@ -1155,8 +1264,8 @@ export class DoctorPortal {
 
         const consultationFee = parseFloat(this.container.querySelector('#doc-consultation-fee').value) || 0;
         const procedureFee = parseFloat(this.container.querySelector('#doc-procedure-fee').value) || 0;
-        const medicineFee = parseFloat(this.container.querySelector('#doc-medicine-fee').value) || 0;
-        const totalBill = consultationFee + procedureFee + medicineFee;
+        const medicineFee = 0;
+        const totalBill = consultationFee + procedureFee;
 
         // Gather medicines from table rows
         const medRows = [];
@@ -1204,7 +1313,7 @@ export class DoctorPortal {
         const feeBreakdown = {
           consultationFee,
           procedureFee,
-          medicineFee
+          medicineFee: 0
         };
 
         // Save to Database
@@ -1223,11 +1332,11 @@ export class DoctorPortal {
           confetti({ particleCount: 60, spread: 50, origin: { y: 0.6 } });
         } catch (err) {}
 
-        // Trigger 1 (Doctor -> Reception & Pharmacy Live Notification!)
+        // Trigger 1 (Doctor -> Reception Live Notification!)
         notificationEngine.notify({
           type: 'CHECKUP_COMPLETED',
           title: `✅ Checkup Done: ${selectedPatient.name}`,
-          message: `${selectedPatient.name} (${selectedPatient.patientId}) consulted by ${activeDoctor.name}. Total: ₹${totalBill} ready for Billing & Medicare Pharmacy.`,
+          message: `${selectedPatient.name} (${selectedPatient.patientId}) consulted by ${activeDoctor.name}. Total: ₹${totalBill} ready for Reception Billing Desk.`,
           icon: '💳',
           actionText: 'Open Billing & UPI QR',
           onAction: () => {
@@ -1235,7 +1344,7 @@ export class DoctorPortal {
           }
         });
 
-        alert(`Checkup and Prescription for ${selectedPatient.name} saved!\nReal-time notification sent to Reception Billing & Medicare Pharmacy.`);
+        alert(`Checkup and Prescription for ${selectedPatient.name} saved!\nPatient routed to Reception Billing Desk.`);
         this.onNavigate('billing', selectedPatient.patientId);
       });
     }

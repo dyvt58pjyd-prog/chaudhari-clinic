@@ -246,7 +246,7 @@ export const COMBO_PACKAGES = [
       "1x Ultrasonic Scaling & Airflow Prophylaxis Polishing",
       "1x Collagen Glow Eye & Lip Rejuvenation Mask",
       "Full digital smile & skin hydration diagnostic report",
-      "Medicare Pharmacy post-care kit on premises"
+      "Specialized clinical post-care recovery kit"
     ],
     duration: "2 Visits (Recommended 2-3 weeks before ceremony)",
     regularPrice: "₹14,500",
@@ -291,7 +291,7 @@ export const COMBO_PACKAGES = [
       "1 Pediatric Dental Fluoride & Cavity Shield (Dr. Rutika - MDS)",
       "Digital Intraoral Cavity Scanning & Skin Dermoscopy",
       "15% Flat Savings on all Laser, Implants & Veneer treatments all year",
-      "Medicare Pharmacy discount on prescribed medications"
+      "Complimentary emergency priority appointment scheduling"
     ],
     duration: "1 Year Validity (Up to 4 family members)",
     regularPrice: "₹12,000",

@@ -6,7 +6,6 @@ import { ReceptionPortal } from './components/receptionPortal.js';
 import { DoctorPortal } from './components/doctorPortal.js';
 import { BillingPortal } from './components/billingPortal.js';
 import { AdminPortal } from './components/adminPortal.js';
-import { PharmacyPortal } from './components/pharmacyPortal.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const headerMount = document.querySelector('#app-header-mount');
@@ -20,7 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let doctorPortal = null;
   let billingPortal = null;
   let adminPortal = null;
-  let pharmacyPortal = null;
 
   const navigateTo = (view, patientId = null) => {
     // If not authenticated, force login view
@@ -105,10 +103,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (patientId) {
         billingPortal.setPatient(patientId);
       }
-    } else if (activeView === 'pharmacy') {
-      pharmacyPortal = new PharmacyPortal(container, (targetView, pid) => {
-        navigateTo(targetView, pid);
-      });
     } else if (activeView === 'admin') {
       adminPortal = new AdminPortal(container, (targetView, pid) => {
         navigateTo(targetView, pid);

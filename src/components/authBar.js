@@ -142,7 +142,7 @@ export class AuthBar {
               </div>
               <div>
                 <div class="app-brand-name">
-                  CHAUDHARI CLINIC <span class="app-pharmacy-tag">+ Medicare Pharmacy</span>
+                  CHAUDHARI CLINIC
                 </div>
                 <div class="app-brand-sub">Clinical Hospital Information System • Khamgaon</div>
               </div>
@@ -187,31 +187,28 @@ export class AuthBar {
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
           Reception & Queue
         </button>
+        <button type="button" class="app-nav-btn ${this.activeView === 'doctor' ? 'active' : ''}" id="app-nav-doctor">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          Doctor Consultation & EMR
+        </button>
         <button type="button" class="app-nav-btn ${this.activeView === 'billing' ? 'active' : ''}" id="app-nav-billing">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
           Billing (UPI QR / Cash)
-        </button>
-        <button type="button" class="app-nav-btn ${this.activeView === 'pharmacy' ? 'active' : ''}" id="app-nav-pharmacy">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg>
-          Medicare Pharmacy
         </button>
       `;
     } else if (user.role === 'doctor') {
       navButtonsHtml = `
         <button type="button" class="app-nav-btn ${this.activeView === 'doctor' ? 'active' : ''}" id="app-nav-doctor">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-          Doctor Checkup & Selective Rx
+          Doctor Consultation & EMR
         </button>
-        <button type="button" class="app-nav-btn ${this.activeView === 'pharmacy' ? 'active' : ''}" id="app-nav-pharmacy">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg>
-          Pharmacy Dispensing
+        <button type="button" class="app-nav-btn ${this.activeView === 'reception' ? 'active' : ''}" id="app-nav-reception">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          Patient Admissions & Queue
         </button>
-      `;
-    } else if (user.role === 'pharmacy') {
-      navButtonsHtml = `
-        <button type="button" class="app-nav-btn ${this.activeView === 'pharmacy' ? 'active' : ''}" id="app-nav-pharmacy">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg>
-          Medicare Pharmacy Queue
+        <button type="button" class="app-nav-btn ${this.activeView === 'billing' ? 'active' : ''}" id="app-nav-billing">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          Billing Desk
         </button>
       `;
     } else if (user.role === 'admin') {
@@ -229,9 +226,6 @@ export class AuthBar {
         <button type="button" class="app-nav-btn ${this.activeView === 'billing' ? 'active' : ''}" id="app-nav-billing">
           Billing
         </button>
-        <button type="button" class="app-nav-btn ${this.activeView === 'pharmacy' ? 'active' : ''}" id="app-nav-pharmacy">
-          Pharmacy
-        </button>
       `;
     }
 
@@ -245,7 +239,7 @@ export class AuthBar {
             </div>
             <div>
               <div class="app-brand-name">
-                CHAUDHARI CLINIC <span class="app-pharmacy-tag">+ Medicare Pharmacy</span>
+                CHAUDHARI CLINIC
               </div>
               <div class="app-brand-sub">Clinical EMR, Selective Rx & UPI/Cash Billing • Khamgaon</div>
             </div>
@@ -343,7 +337,6 @@ export class AuthBar {
       if (btnRec) btnRec.addEventListener('click', () => this.onNavigate('reception'));
       if (btnDoc) btnDoc.addEventListener('click', () => this.onNavigate('doctor'));
       if (btnBill) btnBill.addEventListener('click', () => this.onNavigate('billing'));
-      if (btnPharm) btnPharm.addEventListener('click', () => this.onNavigate('pharmacy'));
       if (btnAdm) btnAdm.addEventListener('click', () => this.onNavigate('admin'));
 
       if (btnTestNotif) {
@@ -386,13 +379,13 @@ export class AuthBar {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
             <span>Reception</span>
           </button>
+          <button type="button" class="android-nav-item ${this.activeView === 'doctor' ? 'active' : ''}" id="m-nav-doctor">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+            <span>Doctor EMR</span>
+          </button>
           <button type="button" class="android-nav-item ${this.activeView === 'billing' ? 'active' : ''}" id="m-nav-billing">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
             <span>Billing</span>
-          </button>
-          <button type="button" class="android-nav-item ${this.activeView === 'pharmacy' ? 'active' : ''}" id="m-nav-pharmacy">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg>
-            <span>Pharmacy</span>
           </button>
         `;
       } else if (user.role === 'doctor') {
@@ -401,16 +394,13 @@ export class AuthBar {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
             <span>Doctor EMR</span>
           </button>
-          <button type="button" class="android-nav-item ${this.activeView === 'pharmacy' ? 'active' : ''}" id="m-nav-pharmacy">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg>
-            <span>Pharmacy</span>
+          <button type="button" class="android-nav-item ${this.activeView === 'reception' ? 'active' : ''}" id="m-nav-reception">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+            <span>Queue</span>
           </button>
-        `;
-      } else if (user.role === 'pharmacy') {
-        mobileNavButtonsHtml = `
-          <button type="button" class="android-nav-item ${this.activeView === 'pharmacy' ? 'active' : ''}" id="m-nav-pharmacy">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg>
-            <span>Pharmacy Queue</span>
+          <button type="button" class="android-nav-item ${this.activeView === 'billing' ? 'active' : ''}" id="m-nav-billing">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>Billing</span>
           </button>
         `;
       } else if (user.role === 'admin') {
@@ -428,9 +418,6 @@ export class AuthBar {
           <button type="button" class="android-nav-item ${this.activeView === 'billing' ? 'active' : ''}" id="m-nav-billing">
             <span>Billing</span>
           </button>
-          <button type="button" class="android-nav-item ${this.activeView === 'pharmacy' ? 'active' : ''}" id="m-nav-pharmacy">
-            <span>Pharmacy</span>
-          </button>
         `;
       }
 
@@ -447,14 +434,12 @@ export class AuthBar {
       const mRec = this.mobileNavEl.querySelector('#m-nav-reception');
       const mDoc = this.mobileNavEl.querySelector('#m-nav-doctor');
       const mBill = this.mobileNavEl.querySelector('#m-nav-billing');
-      const mPharm = this.mobileNavEl.querySelector('#m-nav-pharmacy');
       const mAdm = this.mobileNavEl.querySelector('#m-nav-admin');
       const mLogout = this.mobileNavEl.querySelector('#m-nav-logout');
 
       if (mRec) mRec.addEventListener('click', () => this.onNavigate('reception'));
       if (mDoc) mDoc.addEventListener('click', () => this.onNavigate('doctor'));
       if (mBill) mBill.addEventListener('click', () => this.onNavigate('billing'));
-      if (mPharm) mPharm.addEventListener('click', () => this.onNavigate('pharmacy'));
       if (mAdm) mAdm.addEventListener('click', () => this.onNavigate('admin'));
 
       if (mLogout) {

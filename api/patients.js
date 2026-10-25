@@ -155,7 +155,7 @@ export default async function handler(req, res) {
       // Build billing payload if saving clinical checkup
       let billingPayload = billing;
       let newStatus = status || 'Prescription Ready';
-      let newPharmStatus = pharmacyStatus || 'Pending';
+      let newPharmStatus = pharmacyStatus || 'None';
 
       if (feeBreakdown && !billing) {
         const invRes = await sql`SELECT count(*)::int as total FROM patients WHERE billing IS NOT NULL;`;

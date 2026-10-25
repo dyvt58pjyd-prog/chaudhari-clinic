@@ -1,7 +1,7 @@
 // Comprehensive Print Manager for Hospital Operations
-// Supports OPD Registration Slip, Multilingual Prescriptions (English/Marathi/Hindi),
+// Supports OPD Registration Slip, 1-Page A4 Prescriptions (English/Marathi/Hindi),
 // Dental/Dermatology Procedure Consent Forms, Medical Fitness Certificates,
-// Tax Invoices with UPI/Cash & Pending Balance, and Medicare Pharmacy Packet Slips.
+// and Tax Invoices with Cash & UPI QR.
 
 // Multilingual Translations for Frequencies & Instructions
 const TRANSLATIONS = {
@@ -24,7 +24,7 @@ const TRANSLATIONS = {
     "diagnosisLabel": "निदान / आजार:",
     "adviceLabel": "डॉक्टरांचा सल्ला व सूचना:",
     "followUpLabel": "पुढील तपासणी तारीख:",
-    "pharmacyTag": "औषधे आपल्या क्लिनिकमधील 'मेडिकेअर फार्मसी' मध्ये उपलब्ध आहेत."
+    "clinicTag": "कृपया डॉक्टरांच्या सल्ल्यानुसार औषधोपचार पूर्ण करावा."
   },
   hi: {
     "1-0-1 (After Food)": "सुबह १ - रात १ (खाने के बाद)",
@@ -45,14 +45,14 @@ const TRANSLATIONS = {
     "diagnosisLabel": "निदान (Diagnosis):",
     "adviceLabel": "डॉक्टर की सलाह:",
     "followUpLabel": "अगली जांच तिथि:",
-    "pharmacyTag": "दवाइयां क्लिनिक के 'मेडिकेयर फार्मेसी' पर उपलब्ध हैं।"
+    "clinicTag": "कृपया डॉक्टर के निर्देशानुसार दवाइयों का सेवन करें।"
   },
   en: {
     "rxTitle": "Doctor's Clinical Prescription (Rx)",
     "diagnosisLabel": "Clinical Diagnosis:",
     "adviceLabel": "Doctor's Advice & Precautions:",
     "followUpLabel": "Recommended Follow-Up Date:",
-    "pharmacyTag": "Dispensed on-site at Medicare Pharmacy."
+    "clinicTag": "Take medications as directed by consulting specialist."
   }
 };
 
@@ -142,7 +142,7 @@ export function printOpdSlip(patient, config) {
           ` : ''}
         </div>
         <div class="footer">
-          Attached On-Site: Medicare Pharmacy • Please be seated in waiting lounge.
+          Please be seated in waiting lounge. Hospital Helpline: +91 90498 83983
         </div>
       </div>
       <script>window.onload = function() { window.print(); };</script>
@@ -152,8 +152,8 @@ export function printOpdSlip(patient, config) {
   printWindow.document.close();
 }
 
-// 2. MULTILINGUAL PRESCRIPTION (ENGLISH / MARATHI / HINDI)
-export function printPrescription(patient, config, lang = 'en') {
+// 2. DETAILED CLINICAL CASE SHEET & PRESCRIPTION (STRICT 1-PAGE A4 PRINT)
+export function printPrescription(patient, config, lang = 'mr') {
   const rx = patient.prescription;
   const notes = patient.clinicalNotes;
   if (!rx) return;
@@ -164,143 +164,459 @@ export function printPrescription(patient, config, lang = 'en') {
     return;
   }
 
-  const dict = TRANSLATIONS[lang] || TRANSLATIONS.en;
+  const dict = TRANSLATIONS[lang] || TRANSLATIONS.mr;
+
+  const docQualifications = patient.assignedDoctorId === 'dr-rajnikant' 
+    ? 'M.B.B.S., D.D.V. (Mumbai) • Consultant Dermatologist, Trichologist & Cosmetologist'
+    : patient.assignedDoctorId === 'dr-priyanka'
+    ? 'B.D.S. (Nashik) • Senior Dental Surgeon & Endodontist (Painless RCT Specialist)'
+    : 'B.D.S., M.D.S. (Nashik) • Senior Pediatric Dental Specialist & Oral Physician';
 
   printWindow.document.write(`
     <!DOCTYPE html>
-    <html>
+    <html lang="${lang}">
     <head>
-      <title>Prescription (${lang.toUpperCase()}) - ${patient.patientId}</title>
+      <meta charset="UTF-8">
+      <title>Prescription_${patient.patientId}_${patient.name.replace(/\s+/g, '_')}</title>
       <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Devanagari", sans-serif; padding: 24px; color: #1e293b; }
-        .rx-card { border: 2.5px solid #0f766e; border-radius: 12px; padding: 24px; max-width: 800px; margin: 0 auto; box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
-        .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #0f766e; padding-bottom: 14px; margin-bottom: 16px; }
-        .clinic-brand h1 { font-size: 21px; color: #0f766e; margin: 0; font-weight: 800; }
-        .clinic-brand p { font-size: 11px; color: #475569; margin: 2px 0 0 0; }
-        .doc-badge { text-align: right; }
-        .doc-name { font-size: 16px; font-weight: 800; color: #0f172a; margin: 0; }
-        .doc-creds { font-size: 11px; color: #0284c7; margin-top: 2px; }
-        .patient-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; background: #f8fafc; padding: 12px; border-radius: 8px; margin-bottom: 14px; font-size: 12px; border: 1px solid #e2e8f0; }
-        .patient-strip div span { display: block; font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; }
-        .alert-banner { background: #fef2f2; border-left: 4px solid #ef4444; padding: 8px 12px; margin-bottom: 14px; font-size: 12px; color: #991b1b; font-weight: 600; border-radius: 0 6px 6px 0; }
-        .rvg-box { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; font-size: 11px; padding: 6px 10px; border-radius: 6px; margin-bottom: 14px; display: inline-block; }
-        .diagnosis-box { background: #f0fdfa; border-left: 4px solid #0f766e; padding: 10px 14px; margin-bottom: 18px; border-radius: 0 8px 8px 0; font-size: 13px; }
-        .rx-symbol { font-size: 28px; font-weight: 900; color: #0f766e; margin-bottom: 8px; font-family: Georgia, serif; }
-        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px; }
-        th { background: #f1f5f9; padding: 8px 10px; text-align: left; font-size: 11px; color: #475569; text-transform: uppercase; border-bottom: 2px solid #cbd5e1; }
-        td { padding: 10px; border-bottom: 1px solid #e2e8f0; }
-        .advice-box { background: #fffbeb; border: 1.5px solid #fef3c7; border-radius: 8px; padding: 12px; margin-bottom: 24px; font-size: 12px; }
-        .footer-sig { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 30px; padding-top: 20px; border-top: 1px dashed #cbd5e1; }
-        .sig-block { text-align: right; }
-        .sig-line { width: 190px; border-top: 1px solid #0f172a; margin-top: 40px; }
+        @page {
+          size: A4 portrait;
+          margin: 6mm 8mm;
+        }
+        * {
+          box-sizing: border-box;
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
+        html, body {
+          margin: 0;
+          padding: 0;
+          background: #ffffff;
+          color: #0f172a;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Devanagari", sans-serif;
+          font-size: 9.5pt;
+          line-height: 1.3;
+        }
+        .a4-page-frame {
+          width: 100%;
+          max-width: 194mm;
+          height: 280mm;
+          max-height: 280mm;
+          margin: 0 auto;
+          padding: 8mm 9mm 6mm 9mm;
+          border: 2px solid #0f766e;
+          border-radius: 6px;
+          display: flex;
+          flex-direction: column;
+          justify-content: space-between;
+          page-break-inside: avoid;
+          page-break-after: avoid;
+          overflow: hidden;
+        }
+        /* Clinic Official Header */
+        .clinic-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          border-bottom: 2px solid #0f766e;
+          padding-bottom: 6px;
+          margin-bottom: 6px;
+        }
+        .clinic-brand {
+          max-width: 62%;
+        }
+        .clinic-brand h1 {
+          font-size: 13.5pt;
+          font-weight: 800;
+          color: #0f766e;
+          margin: 0;
+          letter-spacing: -0.2px;
+          line-height: 1.2;
+        }
+        .clinic-brand .mr-name {
+          font-size: 10.5pt;
+          font-weight: 700;
+          color: #0369a1;
+          margin: 2px 0 0 0;
+        }
+        .clinic-brand .addr-text {
+          font-size: 7.8pt;
+          color: #475569;
+          margin: 3px 0 0 0;
+          line-height: 1.25;
+        }
+        .clinic-brand .contact-pill {
+          display: inline-block;
+          font-size: 8pt;
+          font-weight: 700;
+          color: #0f766e;
+          margin-top: 3px;
+        }
+        .doctor-badge {
+          text-align: right;
+          max-width: 36%;
+        }
+        .doc-name {
+          font-size: 11.5pt;
+          font-weight: 800;
+          color: #0f172a;
+          margin: 0;
+          line-height: 1.2;
+        }
+        .doc-creds {
+          font-size: 8pt;
+          color: #0284c7;
+          font-weight: 700;
+          margin: 2px 0 0 0;
+          line-height: 1.2;
+        }
+        .doc-meta {
+          font-size: 7.5pt;
+          color: #64748b;
+          margin-top: 3px;
+        }
+        /* Patient Demographic Row */
+        .patient-info-strip {
+          display: grid;
+          grid-template-columns: 1.6fr 1.6fr 1fr 1.2fr;
+          gap: 6px;
+          background: #f8fafc;
+          border: 1px solid #cbd5e1;
+          border-radius: 5px;
+          padding: 5px 8px;
+          margin-bottom: 6px;
+          font-size: 8.5pt;
+        }
+        .pi-item span {
+          display: block;
+          font-size: 6.8pt;
+          text-transform: uppercase;
+          color: #64748b;
+          font-weight: 700;
+          margin-bottom: 1px;
+        }
+        .pi-item strong {
+          color: #0f172a;
+          font-size: 9pt;
+        }
+        /* Safety Alerts & RVG X-Ray Strip */
+        .sub-meta-strip {
+          display: flex;
+          gap: 6px;
+          margin-bottom: 6px;
+        }
+        .alert-flag {
+          background: #fef2f2;
+          border: 1px solid #fecaca;
+          color: #b91c1c;
+          font-size: 7.5pt;
+          font-weight: 700;
+          padding: 2px 6px;
+          border-radius: 4px;
+          flex: 1;
+        }
+        .rvg-flag {
+          background: #eff6ff;
+          border: 1px solid #bfdbfe;
+          color: #1e40af;
+          font-size: 7.5pt;
+          font-weight: 700;
+          padding: 2px 6px;
+          border-radius: 4px;
+        }
+        /* Clinical Examination Notes & Diagnosis Box */
+        .clinical-notes-box {
+          background: #f0fdfa;
+          border-left: 3.5px solid #0f766e;
+          border-radius: 0 5px 5px 0;
+          padding: 5px 8px;
+          margin-bottom: 6px;
+          font-size: 8.5pt;
+        }
+        .cn-diag-row {
+          display: flex;
+          align-items: baseline;
+          gap: 6px;
+        }
+        .cn-label {
+          font-size: 7.2pt;
+          text-transform: uppercase;
+          font-weight: 800;
+          color: #0f766e;
+        }
+        .cn-diag-title {
+          font-size: 10pt;
+          font-weight: 800;
+          color: #0f172a;
+        }
+        .cn-sub-line {
+          font-size: 7.8pt;
+          color: #334155;
+          margin-top: 2px;
+          line-height: 1.25;
+        }
+        /* Rx Heading */
+        .rx-header-row {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          margin: 2px 0 4px 0;
+        }
+        .rx-symbol {
+          font-size: 18pt;
+          font-weight: 900;
+          color: #0f766e;
+          font-family: Georgia, serif;
+          line-height: 1;
+        }
+        .rx-badge-title {
+          font-size: 8.5pt;
+          font-weight: 800;
+          color: #0f766e;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+        }
+        /* Rx Medicine Table */
+        .rx-table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-bottom: 6px;
+          font-size: 8.5pt;
+        }
+        .rx-table th {
+          background: #f1f5f9;
+          color: #334155;
+          font-size: 7.5pt;
+          text-transform: uppercase;
+          padding: 4px 6px;
+          border: 1px solid #cbd5e1;
+          text-align: left;
+          font-weight: 700;
+        }
+        .rx-table td {
+          padding: 4px 6px;
+          border: 1px solid #e2e8f0;
+          vertical-align: middle;
+        }
+        .rx-table tr:nth-child(even) td {
+          background: #fafafa;
+        }
+        .med-name-bold {
+          font-weight: 700;
+          color: #0f172a;
+          font-size: 9pt;
+        }
+        .med-type-badge {
+          font-size: 7.2pt;
+          color: #0284c7;
+          font-weight: 600;
+        }
+        .med-freq-highlight {
+          color: #0f766e;
+          font-weight: 700;
+          font-size: 8.5pt;
+        }
+        /* Doctor Special Advice Box */
+        .advice-card {
+          background: #fffbeb;
+          border: 1px solid #fde68a;
+          border-radius: 5px;
+          padding: 5px 8px;
+          margin-bottom: 6px;
+          font-size: 8pt;
+        }
+        .advice-head {
+          font-size: 7.2pt;
+          text-transform: uppercase;
+          font-weight: 800;
+          color: #b45309;
+        }
+        .advice-text {
+          margin: 2px 0 0 0;
+          color: #78350f;
+          line-height: 1.25;
+        }
+        .follow-chip {
+          display: inline-block;
+          margin-top: 3px;
+          background: #fef3c7;
+          color: #92400e;
+          font-weight: 700;
+          font-size: 7.8pt;
+          padding: 1px 5px;
+          border-radius: 3px;
+        }
+        /* Bottom Footer with Signature Block */
+        .footer-bottom-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-end;
+          padding-top: 6px;
+          border-top: 1.5px dashed #cbd5e1;
+          margin-top: 4px;
+        }
+        .footer-note {
+          font-size: 7.2pt;
+          color: #64748b;
+          max-width: 60%;
+          line-height: 1.25;
+        }
+        .sig-block {
+          text-align: right;
+        }
+        .sig-space {
+          height: 28px;
+        }
+        .sig-line {
+          width: 160px;
+          border-top: 1px solid #0f172a;
+          margin-bottom: 2px;
+        }
+        .sig-name {
+          font-size: 9.5pt;
+          font-weight: 800;
+          color: #0f172a;
+        }
+        .sig-seal {
+          font-size: 7pt;
+          color: #64748b;
+        }
       </style>
     </head>
     <body>
-      <div class="rx-card">
-        <div class="header">
-          <div class="clinic-brand">
-            <h1>${config.hospitalName}</h1>
-            <p style="font-weight: 600; color: #0f766e;">${config.hospitalNameMarathi}</p>
-            <p>${config.address}</p>
-            <p>Direct Doctor Helpline & WhatsApp: ${config.phone}</p>
+      <div class="a4-page-frame">
+        <!-- 1. Clinic Letterhead Header -->
+        <div>
+          <div class="clinic-header">
+            <div class="clinic-brand">
+              <h1>${config.hospitalName}</h1>
+              <div class="mr-name">${config.hospitalNameMarathi}</div>
+              <div class="addr-text">${config.address}</div>
+              <div class="contact-pill">Helpline & WhatsApp: ${config.phone} • Official UPI: ${config.upiId}</div>
+            </div>
+            <div class="doctor-badge">
+              <div class="doc-name">${rx.doctorName}</div>
+              <div class="doc-creds">${docQualifications}</div>
+              <div class="doc-meta">Consultation Date: <strong>${rx.prescribedAt}</strong></div>
+            </div>
           </div>
-          <div class="doc-badge">
-            <h3 class="doc-name">${rx.doctorName}</h3>
-            <p class="doc-creds">${patient.assignedDoctorId === 'dr-rajnikant' ? 'M.B.B.S., D.D.V. (Mumbai) • Consultant Dermatologist' : patient.assignedDoctorId === 'dr-priyanka' ? 'B.D.S. (Nashik) • Senior Dental Surgeon & Endodontist' : 'B.D.S., M.D.S. (Nashik) • Pediatric Dental Specialist'}</p>
-            <p style="font-size: 10px; color: #64748b;">Date: ${rx.prescribedAt}</p>
-          </div>
-        </div>
 
-        <div class="patient-strip">
-          <div>
-            <span>Patient ID</span>
-            <strong>${patient.patientId}</strong>
+          <!-- 2. Patient Demographics Strip -->
+          <div class="patient-info-strip">
+            <div class="pi-item">
+              <span>Patient Full Name</span>
+              <strong>${patient.name}</strong>
+            </div>
+            <div class="pi-item">
+              <span>Patient ID & Token</span>
+              <strong>${patient.patientId} (Token #${patient.tokenNo})</strong>
+            </div>
+            <div class="pi-item">
+              <span>Age / Gender</span>
+              <strong>${patient.age} Yrs / ${patient.gender}</strong>
+            </div>
+            <div class="pi-item">
+              <span>Mobile / Locality</span>
+              <strong>+91 ${patient.phone}</strong>
+              <small style="display:block; color:#64748b; font-size:7pt;">${patient.address}</small>
+            </div>
           </div>
-          <div>
-            <span>Patient Name</span>
-            <strong>${patient.name}</strong>
-          </div>
-          <div>
-            <span>Age / Gender</span>
-            <strong>${patient.age}y / ${patient.gender}</strong>
-          </div>
-          <div>
-            <span>Mobile / Town</span>
-            <strong>+91 ${patient.phone}</strong>
-            <small style="display:block; color:#64748b;">${patient.address}</small>
-          </div>
-        </div>
 
-        ${patient.criticalAlerts && patient.criticalAlerts.length > 0 ? `
-          <div class="alert-banner">
-            ⚠️ MEDICAL SAFETY ALERTS: ${patient.criticalAlerts.join(' • ')}
+          <!-- 3. Safety Alerts & External RVG Strip (if present) -->
+          ${(patient.criticalAlerts && patient.criticalAlerts.length > 0) || patient.externalRvgId ? `
+            <div class="sub-meta-strip">
+              ${patient.criticalAlerts && patient.criticalAlerts.length > 0 ? `
+                <div class="alert-flag">⚠️ SAFETY FLAGS: ${patient.criticalAlerts.join(' • ')}</div>
+              ` : ''}
+              ${patient.externalRvgId ? `
+                <div class="rvg-flag">📷 External X-Ray / RVG Machine ID: <strong>${patient.externalRvgId}</strong></div>
+              ` : ''}
+            </div>
+          ` : ''}
+
+          <!-- 4. Clinical Examination & Diagnosis -->
+          ${notes && (notes.diagnosis || notes.chiefComplaints || notes.treatmentDone) ? `
+            <div class="clinical-notes-box">
+              <div class="cn-diag-row">
+                <span class="cn-label">${dict.diagnosisLabel}</span>
+                <span class="cn-diag-title">${notes.diagnosis || 'Clinical Checkup'}</span>
+              </div>
+              ${notes.chiefComplaints ? `
+                <div class="cn-sub-line"><strong>Complaints / History:</strong> ${notes.chiefComplaints} ${notes.duration ? `(${notes.duration})` : ''}</div>
+              ` : ''}
+              ${notes.clinicalFindings ? `
+                <div class="cn-sub-line"><strong>Clinical Observations:</strong> ${notes.clinicalFindings}</div>
+              ` : ''}
+              ${notes.treatmentDone ? `
+                <div class="cn-sub-line" style="color: #0f766e;"><strong>Procedure Done:</strong> ${notes.treatmentDone}</div>
+              ` : ''}
+            </div>
+          ` : ''}
+
+          <!-- 5. ℞ Prescription Header -->
+          <div class="rx-header-row">
+            <span class="rx-symbol">℞</span>
+            <span class="rx-badge-title">${dict.rxTitle}</span>
           </div>
-        ` : ''}
 
-        ${patient.externalRvgId ? `
-          <div class="rvg-box">
-            📷 External Dental X-Ray / RVG Machine Software ID: <strong>${patient.externalRvgId}</strong>
-          </div>
-        ` : ''}
-
-        ${notes && notes.diagnosis ? `
-          <div class="diagnosis-box">
-            <span style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: #0f766e;">${dict.diagnosisLabel}</span>
-            <div style="font-size: 14px; font-weight: 700; color: #0f172a; margin-top: 2px;">${notes.diagnosis}</div>
-            ${notes.clinicalFindings ? `<div style="font-size: 12px; color: #475569; margin-top: 4px;"><strong>Clinical Findings:</strong> ${notes.clinicalFindings}</div>` : ''}
-            ${notes.treatmentDone ? `<div style="font-size: 12px; color: #0f766e; margin-top: 3px;"><strong>Procedure Done:</strong> ${notes.treatmentDone}</div>` : ''}
-          </div>
-        ` : ''}
-
-        <div class="rx-symbol">℞</div>
-
-        <table>
-          <thead>
-            <tr>
-              <th style="width: 5%;">#</th>
-              <th style="width: 35%;">Medicine Name & Form</th>
-              <th style="width: 25%;">Frequency / Dosage</th>
-              <th style="width: 15%;">Duration</th>
-              <th style="width: 20%;">Instructions</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${rx.medicines.map((m, idx) => `
+          <!-- 6. ℞ Medicines Table -->
+          <table class="rx-table">
+            <thead>
               <tr>
-                <td><strong>${idx + 1}</strong></td>
-                <td>
-                  <strong>${m.name}</strong>
-                  <div style="font-size: 11px; color: #64748b;">[${translateText(m.type, lang)}]</div>
-                </td>
-                <td style="color: #0f766e; font-weight: 700;">${translateText(m.frequency, lang)}</td>
-                <td>${m.duration.replace('Days', translateText('Days', lang))}</td>
-                <td style="font-size: 11px; color: #334155;">${m.instructions}</td>
+                <th style="width: 5%; text-align: center;">#</th>
+                <th style="width: 36%;">Medicine Formulation & Type</th>
+                <th style="width: 25%;">Frequency / Timing</th>
+                <th style="width: 14%;">Duration</th>
+                <th style="width: 20%;">Instructions</th>
               </tr>
-            `).join('')}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              ${rx.medicines.map((m, idx) => `
+                <tr>
+                  <td style="text-align: center; font-weight: 700;">${idx + 1}</td>
+                  <td>
+                    <span class="med-name-bold">${m.name}</span>
+                    <span class="med-type-badge">[${translateText(m.type, lang)}]</span>
+                  </td>
+                  <td class="med-freq-highlight">${translateText(m.frequency, lang)}</td>
+                  <td>${m.duration.replace('Days', translateText('Days', lang))}</td>
+                  <td style="font-size: 8pt; color: #334155;">${m.instructions}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
 
-        ${rx.specialAdvice ? `
-          <div class="advice-box">
-            <strong>${dict.adviceLabel}</strong>
-            <p style="margin: 4px 0 0 0; line-height: 1.4;">${rx.specialAdvice}</p>
-            ${rx.followUpDate ? `<div style="margin-top: 6px; font-weight: 700; color: #b45309;">${dict.followUpLabel} ${rx.followUpDate}</div>` : ''}
-          </div>
-        ` : ''}
+          <!-- 7. Doctor's Special Advice & Follow-Up Date -->
+          ${rx.specialAdvice || rx.followUpDate ? `
+            <div class="advice-card">
+              <div class="advice-head">${dict.adviceLabel}</div>
+              ${rx.specialAdvice ? `<p class="advice-text">${rx.specialAdvice}</p>` : ''}
+              ${rx.followUpDate ? `<div class="follow-chip">📅 ${dict.followUpLabel} ${rx.followUpDate}</div>` : ''}
+            </div>
+          ` : ''}
+        </div>
 
-        <div class="footer-sig">
-          <div>
-            <div style="font-size: 12px; font-weight: 800; color: #0f766e;">Medicare Pharmacy (मेडिकेअर फार्मसी)</div>
-            <div style="font-size: 11px; color: #64748b;">${dict.pharmacyTag}</div>
+        <!-- 8. Footer & Doctor Signature / Clinic Seal Block -->
+        <div class="footer-bottom-row">
+          <div class="footer-note">
+            <strong>${config.hospitalName}</strong><br />
+            ${dict.clinicTag}<br />
+            Helpline & Emergency Contact: <strong>+91 90498 83983</strong> • Khamgaon
           </div>
           <div class="sig-block">
+            <div class="sig-space"></div>
             <div class="sig-line"></div>
-            <div style="font-size: 12px; font-weight: 700; margin-top: 4px;">${rx.doctorName}</div>
-            <div style="font-size: 10px; color: #64748b;">Consulting Specialist Signature & Seal</div>
+            <div class="sig-name">${rx.doctorName}</div>
+            <div class="sig-sub">Consulting Specialist Signature & Clinic Seal</div>
           </div>
         </div>
       </div>
-      <script>window.onload = function() { window.print(); };</script>
+
+      <script>
+        window.onload = function() {
+          window.print();
+        };
+      </script>
     </body>
     </html>
   `);

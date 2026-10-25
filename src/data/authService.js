@@ -1,5 +1,5 @@
 // Hospital Staff Authentication & Session Service
-// Secure Username & Password credentials for Chaudhari Clinic & Medicare Pharmacy
+// Secure Username & Password credentials for Chaudhari Clinic
 
 export const HOSPITAL_STAFF_ACCOUNTS = [
   {
@@ -51,16 +51,6 @@ export const HOSPITAL_STAFF_ACCOUNTS = [
     department: 'Clinical OPD Consultations',
     doctorId: 'dr-rajnikant',
     avatar: '👨‍⚕️'
-  },
-  {
-    username: 'pharmacy',
-    password: 'pharmacy@123',
-    passwords: ['pharmacy@123', 'meds@123'],
-    name: 'Medicare Pharmacy Desk',
-    role: 'pharmacy',
-    department: 'Live Prescription Dispensing Queue',
-    doctorId: null,
-    avatar: '💊'
   },
   {
     username: 'admin',

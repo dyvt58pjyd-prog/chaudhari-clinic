@@ -33,8 +33,8 @@ export async function ensureSchemaInitialized(sql) {
     await sql`
       CREATE TABLE IF NOT EXISTS hospital_config (
         id INT PRIMARY KEY DEFAULT 1,
-        hospital_name VARCHAR(255) NOT NULL DEFAULT 'Chaudhari Skin & Dental Care Multispeciality Clinic & Medicare Pharmacy',
-        hospital_name_marathi VARCHAR(255) NOT NULL DEFAULT 'चौधरी स्किन व डेंटल केअर मल्टीस्पेशालिटी क्लिनिक व मेडिकेअर फार्मसी',
+        hospital_name VARCHAR(255) NOT NULL DEFAULT 'Chaudhari Skin & Dental Care Multispeciality Clinic',
+        hospital_name_marathi VARCHAR(255) NOT NULL DEFAULT 'चौधरी स्किन व डेंटल केअर मल्टीस्पेशालिटी क्लिनिक',
         address TEXT NOT NULL DEFAULT 'Shriram Chowk, Farshi Road, Near Dr. Chande Clinic, Shivalay Vihar, Khamgaon, Buldhana – 444303',
         phone VARCHAR(50) NOT NULL DEFAULT '+91 90498 83983',
         upi_id VARCHAR(100) NOT NULL DEFAULT '9049883983@ybl',
@@ -47,14 +47,16 @@ export async function ensureSchemaInitialized(sql) {
       INSERT INTO hospital_config (id, hospital_name, hospital_name_marathi, address, phone, upi_id, upi_payee_name)
       VALUES (
         1,
-        'Chaudhari Skin & Dental Care Multispeciality Clinic & Medicare Pharmacy',
-        'चौधरी स्किन व डेंटल केअर मल्टीस्पेशालिटी क्लिनिक व मेडिकेअर फार्मसी',
+        'Chaudhari Skin & Dental Care Multispeciality Clinic',
+        'चौधरी स्किन व डेंटल केअर मल्टीस्पेशालिटी क्लिनिक',
         'Shriram Chowk, Farshi Road, Near Dr. Chande Clinic, Shivalay Vihar, Khamgaon, Buldhana – 444303',
         '+91 90498 83983',
         '9049883983@ybl',
         'Chaudhari Clinic Khamgaon'
       )
-      ON CONFLICT (id) DO NOTHING;
+      ON CONFLICT (id) DO UPDATE SET
+        hospital_name = EXCLUDED.hospital_name,
+        hospital_name_marathi = EXCLUDED.hospital_name_marathi;
     `;
 
     // 2. Patients Table

@@ -67,7 +67,7 @@ export class ReceptionPortal {
           <div>
             <div class="section-tag-pill teal">Front Desk & Admissions</div>
             <h2 class="portal-title">Patient Admissions & OPD Registry</h2>
-            <p class="portal-subtitle">Auto-assign Unique Patient ID • Voice Caller • Route to 3 Specialists • Attached Medicare Pharmacy</p>
+            <p class="portal-subtitle">Auto-assign Unique Patient ID • Voice Caller • Route to 3 Specialists • UPI & Cash Billing Desk</p>
           </div>
 
           <div class="reception-nav-pills">
@@ -273,7 +273,7 @@ export class ReceptionPortal {
                 <li><strong>Returning Patient Recognition:</strong> Enter mobile number to instantly populate existing medical profile.</li>
                 <li><strong>Unique ID Creation:</strong> Each patient receives an unalterable hospital ID (e.g. <code>CSD-P1002</code>) linked to their records forever.</li>
                 <li><strong>Voice Token Caller:</strong> 1-click announces patient token and doctor cabin over waiting room speakers.</li>
-                <li><strong>Medicare Pharmacy:</strong> Real-time integration transmits prescriptions straight to on-site pharmacy desk.</li>
+                <li><strong>Direct Reception Billing:</strong> Prescriptions synchronize directly with front desk for UPI/Cash receipt.</li>
               </ul>
             </div>
           `}
@@ -305,7 +305,7 @@ export class ReceptionPortal {
         <div class="registry-filters-bar">
           <div class="search-input-wrap">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" id="registry-search-input" class="search-input" placeholder="Search by Unique Patient ID, Name, Mobile, or Address..." value="${this.searchQuery}" />
+            <input type="text" id="registry-search-input" class="search-input" placeholder="🔍 Search by Patient Name or 10-digit Mobile Number (e.g. Suresh, 9822145670)..." value="${this.searchQuery}" />
           </div>
 
           <div class="status-filter-pills">

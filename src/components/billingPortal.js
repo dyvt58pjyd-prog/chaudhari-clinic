@@ -18,6 +18,7 @@ export class BillingPortal {
     this.cashTendered = '';
     this.upiTxnRef = '';
     this.generatedQrDataUrl = null;
+    this.searchQuery = '';
     this.staffName = 'Reception Desk - Sunita';
     this.render();
   }
@@ -60,9 +61,20 @@ export class BillingPortal {
     const patients = hospitalDb.getAllPatients();
     const config = hospitalDb.getConfig();
 
+    // Real-time search filter by Name or Mobile
+    const q = (this.searchQuery || '').trim().toLowerCase();
+    const filterFn = (p) => {
+      if (!q) return true;
+      const nameMatch = p.name && p.name.toLowerCase().includes(q);
+      const phoneMatch = p.phone && p.phone.includes(q);
+      const idMatch = p.patientId && p.patientId.toLowerCase().includes(q);
+      const tokenMatch = p.tokenNo && String(p.tokenNo).includes(q);
+      return nameMatch || phoneMatch || idMatch || tokenMatch;
+    };
+
     // Find billable and paid patients
-    const billablePatients = patients.filter(p => p.billing && (p.billing.paymentStatus === 'Pending' || p.billing.paymentStatus === 'Partial'));
-    const completedPatients = patients.filter(p => p.billing && p.billing.paymentStatus === 'Paid');
+    const billablePatients = patients.filter(p => p.billing && (p.billing.paymentStatus === 'Pending' || p.billing.paymentStatus === 'Partial')).filter(filterFn);
+    const completedPatients = patients.filter(p => p.billing && p.billing.paymentStatus === 'Paid').filter(filterFn);
 
     if (!this.selectedPatientId && billablePatients.length > 0) {
       this.selectedPatientId = billablePatients[0].patientId;
@@ -90,7 +102,7 @@ export class BillingPortal {
           <div>
             <div class="section-tag-pill">Hospital Billing & Cash/UPI Desk</div>
             <h2 class="portal-title">Patient Fee Collection & Dynamic UPI QR</h2>
-            <p class="portal-subtitle">Linked with Doctor Clinical Notes and Medicare Pharmacy</p>
+            <p class="portal-subtitle">Linked with Doctor Clinical Examination & Consultation Fees</p>
           </div>
           <div class="header-action-group">
             <span class="upi-id-badge">
@@ -106,20 +118,35 @@ export class BillingPortal {
             <div class="sidebar-header">
               <h3 class="card-title">Pending Billing Queue (${billablePatients.length})</h3>
             </div>
+
+            <!-- Search by Patient Name or Mobile Number -->
+            <div class="doc-queue-search-wrap mb-2">
+              <span class="search-icon">🔍</span>
+              <input 
+                type="text" 
+                id="billing-search-input" 
+                class="form-input form-input-sm" 
+                placeholder="Search Name or Mobile..." 
+                value="${this.searchQuery}" 
+                autocomplete="off"
+              />
+              ${this.searchQuery ? `<button type="button" class="search-clear-btn" id="btn-clear-billing-search">✕</button>` : ''}
+            </div>
+
             <div class="pending-bills-list">
               ${billablePatients.length === 0 ? `
                 <div class="empty-bills-msg">
                   <span class="empty-icon">✓</span>
-                  <p>All patient bills are clear! No pending payments.</p>
+                  <p>${this.searchQuery ? `No billing records found matching "${this.searchQuery}"` : 'All patient bills are clear! No pending payments.'}</p>
                 </div>
               ` : billablePatients.map(p => `
                 <div class="bill-patient-chip ${p.patientId === this.selectedPatientId ? 'selected' : ''}" data-id="${p.patientId}">
                   <div class="chip-top">
-                    <span class="chip-id">${p.patientId}</span>
+                    <span class="chip-id">${p.patientId} • #${p.tokenNo}</span>
                     <span class="chip-amount">₹ ${p.billing.totalAmount}</span>
                   </div>
                   <strong class="chip-name">${p.name}</strong>
-                  <div class="chip-doctor">${p.clinicalNotes ? p.clinicalNotes.doctorName.split(' ')[1] : 'OPD'} • Token #${p.tokenNo}</div>
+                  <div class="chip-doctor">${p.clinicalNotes ? p.clinicalNotes.doctorName.split(' ')[1] : 'OPD'} • 📞 ${p.phone}</div>
                 </div>
               `).join('')}
             </div>
@@ -132,7 +159,7 @@ export class BillingPortal {
                   <div class="recent-paid-item">
                     <div>
                       <div class="font-bold text-xs">${cp.name} (${cp.patientId})</div>
-                      <div class="text-xs text-muted">${cp.billing.invoiceId} • Paid via ${cp.billing.paymentMethod}</div>
+                      <div class="text-xs text-muted">${cp.billing.invoiceId} • Paid via ${cp.billing.paymentMethod} • 📞 ${cp.phone}</div>
                     </div>
                     <button type="button" class="btn-icon-xs btn-reprint-inv" data-id="${cp.patientId}" title="Print Invoice">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
@@ -184,12 +211,6 @@ export class BillingPortal {
                     <div class="inv-row">
                       <span>Procedure Charges</span>
                       <span>₹ ${patient.billing.procedureFee.toFixed(2)}</span>
-                    </div>
-                  ` : ''}
-                  ${patient.billing.medicineFee > 0 ? `
-                    <div class="inv-row">
-                      <span>Medicare Pharmacy Medicines</span>
-                      <span>₹ ${patient.billing.medicineFee.toFixed(2)}</span>
                     </div>
                   ` : ''}
                   <div class="inv-row total-highlight">
@@ -258,10 +279,6 @@ export class BillingPortal {
                     <div class="form-field">
                       <label>Procedure / Treatment Charges (₹)</label>
                       <input type="number" id="input-procedure-fee" class="form-input" value="${patient.billing ? patient.billing.procedureFee : 0}" min="0" placeholder="0" />
-                    </div>
-                    <div class="form-field">
-                      <label>Medicare Pharmacy Rx Fee (₹)</label>
-                      <input type="number" id="input-medicine-fee" class="form-input" value="${patient.billing ? patient.billing.medicineFee : 0}" min="0" placeholder="0" />
                     </div>
                   </div>
 
@@ -402,6 +419,27 @@ export class BillingPortal {
   }
 
   bindEvents(patient) {
+    // Search input listener with focus retention
+    const searchInput = this.container.querySelector('#billing-search-input');
+    const btnClearSearch = this.container.querySelector('#btn-clear-billing-search');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        this.searchQuery = e.target.value;
+        this.render();
+        const reSearch = this.container.querySelector('#billing-search-input');
+        if (reSearch) {
+          reSearch.focus();
+          reSearch.setSelectionRange(reSearch.value.length, reSearch.value.length);
+        }
+      });
+    }
+    if (btnClearSearch) {
+      btnClearSearch.addEventListener('click', () => {
+        this.searchQuery = '';
+        this.render();
+      });
+    }
+
     // Select patient chips
     this.container.querySelectorAll('.bill-patient-chip').forEach(chip => {
       chip.addEventListener('click', () => {
@@ -449,13 +487,13 @@ export class BillingPortal {
           `-------------------------------\n` +
           `Consultation Fee: ₹ ${bill.consultationFee.toFixed(2)}\n` +
           `${bill.procedureFee > 0 ? `Procedure Fee: ₹ ${bill.procedureFee.toFixed(2)}\n` : ''}` +
-          `${bill.medicineFee > 0 ? `Pharmacy Medications: ₹ ${bill.medicineFee.toFixed(2)}\n` : ''}` +
+          `${bill.medicineFee > 0 ? `Clinical Consumables: ₹ ${bill.medicineFee.toFixed(2)}\n` : ''}` +
           `Total Charges: ₹ ${bill.totalAmount.toFixed(2)}\n` +
           `*Amount Paid: ₹ ${paid.toFixed(2)} (${bill.paymentMethod})*\n` +
           `${pending > 0 ? `*Pending Balance: ₹ ${pending.toFixed(2)}*\n` : ''}` +
           `${bill.upiTxnRef ? `UPI Ref: ${bill.upiTxnRef}\n` : ''}` +
           `-------------------------------\n` +
-          `Attached Medicare Pharmacy: +91 90498 83983\n` +
+          `Hospital Helpline & WhatsApp: +91 90498 83983\n` +
           `Official UPI VPA: ${config.upiId}`
         );
         window.open(`https://wa.me/91${patient.phone}?text=${msg}`, '_blank');

@@ -24,8 +24,8 @@ export default async function handler(req, res) {
       `;
       if (rows.length === 0) {
         return res.status(200).json({
-          hospitalName: 'Chaudhari Skin & Dental Care Multispeciality Clinic & Medicare Pharmacy',
-          hospitalNameMarathi: 'चौधरी स्किन व डेंटल केअर मल्टीस्पेशालिटी क्लिनिक व मेडिकेअर फार्मसी',
+          hospitalName: 'Chaudhari Skin & Dental Care Multispeciality Clinic',
+          hospitalNameMarathi: 'चौधरी स्किन व डेंटल केअर मल्टीस्पेशालिटी क्लिनिक',
           address: 'Shriram Chowk, Farshi Road, Near Dr. Chande Clinic, Shivalay Vihar, Khamgaon, Buldhana – 444303',
           phone: '+91 90498 83983',
           upiId: '9049883983@ybl',

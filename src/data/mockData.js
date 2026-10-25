@@ -76,7 +76,7 @@ export const MULTI_SESSION_TRACKERS = [
       { session: 1, date: "Aug 20, 2026", notes: "Patch test tolerated well. 810nm diode used with sapphire contact chill. Minimal redness subsided in 2 hours." },
       { session: 2, date: "Sep 22, 2026", notes: "Follicular density reduction noted. Energy calibrated. 40% reduction verified on trichoscopy." }
     ],
-    careNote: "Apply prescribed sunscreen from attached Medicare Pharmacy and avoid direct sun for 3 days post-session."
+    careNote: "Apply prescribed sunscreen and avoid direct sun exposure for 3 days post-session."
   },
   {
     id: "track-rct",
@@ -121,7 +121,7 @@ export const DIGITAL_PRESCRIPTIONS = [
     doctor: "Dr. Priyanka Chaudhari (Anekar)",
     degree: "B.D.S. (Nashik)",
     dept: "Dental & Oral Surgery",
-    dispensedBy: "Medicare Pharmacy (Attached on Clinic Premises, Khamgaon)",
+    dispensedBy: "Prescription Issued at Doctor Cabin",
     diagnosis: "Acute Irreversible Pulpitis - Mandibular Left 1st Molar (Tooth #36)",
     medicines: [
       { name: "Tab. Augmentin 625 Duo (Amoxicillin + Pot. Clavulanate)", dosage: "1 Tablet Twice Daily (After Food)", duration: "3 Days" },
@@ -137,13 +137,13 @@ export const DIGITAL_PRESCRIPTIONS = [
     doctor: "Dr. Rajnikant Arvind Chaudhari",
     degree: "M.B.B.S., D.D.V. (Mumbai)",
     dept: "Skin, Hair & Aesthetics",
-    dispensedBy: "Medicare Pharmacy (Attached on Clinic Premises, Khamgaon)",
+    dispensedBy: "Prescription Issued at Doctor Cabin",
     diagnosis: "Follicular Hair Reduction Maintenance & Post-Laser Barrier Support",
     medicines: [
       { name: "Episoft AC Hydrating Sunscreen Gel SPF 50+ PA++++", dosage: "Apply generously 20 mins before sun exposure, reapply q3h", duration: "Continuous" },
       { name: "Cicalfate+ Restorative Barrier Cream", dosage: "Apply thin layer at night for 3 consecutive days", duration: "3 Nights" }
     ],
-    instructions: "Strict sun defense. Available directly at on-site Medicare Pharmacy counter.",
+    instructions: "Strict sun defense with broad spectrum SPF 50+.",
     signedBy: "Dr. Rajnikant Arvind Chaudhari (DDV Mumbai Reg No. 67104)"
   }
 ];

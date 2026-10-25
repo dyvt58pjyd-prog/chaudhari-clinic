@@ -28,8 +28,8 @@ export class LoginPortal {
             <div class="login-brand-text">
               <span class="login-auth-tag">🏥 Restricted Staff Gateway</span>
               <h1 class="login-hospital-name">Chaudhari Skin & Dental Care</h1>
-              <p class="login-hospital-marathi">चौधरी स्किन अँड डेंटल केअर मल्टीस्पेशालिटी क्लिनिक व मेडिकेअर फार्मसी</p>
-              <p class="login-hospital-sub">Multispeciality Clinic, Trichology, Rotary Endodontics & Medicare Pharmacy</p>
+              <p class="login-hospital-marathi">चौधरी स्किन ॲन्ड डेंटल केअर मल्टीस्पेशालिटी क्लिनिक</p>
+              <p class="login-hospital-sub">Multispeciality Clinic, Trichology, Rotary Endodontics & Smile Design</p>
               <div class="login-location-chip">
                 📍 Shriram Chowk, Farshi Road, Near Dr. Chande Clinic, Khamgaon – 444303
               </div>
@@ -68,9 +68,6 @@ export class LoginPortal {
                 </button>
                 <button type="button" class="btn-role-quick-pill" data-user="dr.rutika" data-pass="smile@123">
                   👩‍⚕️ <strong>Dr. Rutika</strong>
-                </button>
-                <button type="button" class="btn-role-quick-pill" data-user="pharmacy" data-pass="meds@123">
-                  💊 <strong>Pharmacy</strong>
                 </button>
                 <button type="button" class="btn-role-quick-pill" data-user="admin" data-pass="admin@123">
                   🛡️ <strong>Admin</strong>

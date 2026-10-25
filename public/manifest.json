@@ -2,7 +2,7 @@
   "id": "/",
   "name": "Chaudhari Skin & Dental Care HMS",
   "short_name": "Chaudhari HMS",
-  "description": "Hospital Management System, Clinical EMR & Medicare Pharmacy for Chaudhari Skin and Dental Care Clinic, Khamgaon.",
+  "description": "Hospital Management System & Clinical EMR for Chaudhari Skin and Dental Care Clinic, Khamgaon.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
@@ -64,7 +64,7 @@
       "sizes": "720x1280",
       "type": "image/jpeg",
       "form_factor": "narrow",
-      "label": "Chaudhari Clinic Mobile Admissions & Pharmacy Desk"
+      "label": "Chaudhari Clinic Mobile Admissions & Clinical EMR"
     }
   ],
   "shortcuts": [
@@ -83,10 +83,10 @@
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "Medicare Pharmacy",
-      "short_name": "Pharmacy",
-      "description": "Prescription Dispensing Queue",
-      "url": "/?view=pharmacy",
+      "name": "Billing Desk",
+      "short_name": "Billing",
+      "description": "UPI QR & Cash Payments",
+      "url": "/?view=billing",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     }
   ]

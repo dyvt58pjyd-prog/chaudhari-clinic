@@ -1,5 +1,5 @@
 // Hospital Database Engine with LocalStorage Persistence & Neon Serverless Postgres Sync
-// Handles Patients, Unique Patient IDs, Doctor Notes, Prescriptions, Medicare Pharmacy & Cash/UPI Billing
+// Handles Patients, Unique Patient IDs, Doctor Notes, Prescriptions & Cash/UPI Billing
 
 import { apiService } from './apiService.js';
 
@@ -9,7 +9,6 @@ const DB_KEY = 'CHAUDHARI_HOSPITAL_DB_V3';
 export const INITIAL_HOSPITAL_CONFIG = {
   hospitalName: "Chaudhari Skin & Dental Care Multispeciality Clinic",
   hospitalNameMarathi: "चौधरी स्किन ॲन्ड डेंटल केअर मल्टीस्पेशालिटी क्लिनिक",
-  pharmacyName: "Medicare Pharmacy (मेडिकेअर फार्मसी)",
   address: "Shriram Chowk, Farshi Road, Near Dr. Chande Clinic, Shivalay Vihar, Khamgaon, Buldhana – 444303",
   phone: "+91 90498 83983",
   email: "care@chaudhariclinic.com",
@@ -130,7 +129,7 @@ const SEED_PATIENTS = [
     assignedDoctorId: "dr-rajnikant",
     isEmergency: false,
     criticalAlerts: [],
-    status: "Prescription Ready", // Ready for Billing & Pharmacy!
+    status: "Prescription Ready", // Ready for Billing Desk
     externalRvgId: "",
     pharmacyStatus: "Pending",
     dentalLab: { status: "No Lab Work", labName: "", notes: "" },
@@ -371,7 +370,7 @@ export class HospitalDatabase {
       patient.dentalLab = dentalLab;
     }
     patient.status = "Prescription Ready";
-    patient.pharmacyStatus = "Pending"; // Notify Medicare Pharmacy
+    patient.pharmacyStatus = "None"; // No on-site pharmacy
 
     // Prepare billing stub for reception
     const invoiceNum = this.data.nextInvoiceNum || 1003;
