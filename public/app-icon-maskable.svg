@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bgGradMask" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f766e" />
+      <stop offset="100%" stop-color="#042f2e" />
+    </linearGradient>
+  </defs>
+  <!-- Full bleed background for maskable icon -->
+  <rect width="512" height="512" fill="url(#bgGradMask)" />
+  <!-- Medical Cross & Care Icon centered inside 70% safe zone -->
+  <g transform="translate(64, 64) scale(0.75)">
+    <!-- Vertical bar -->
+    <rect x="226" y="100" width="60" height="312" rx="30" fill="#ffffff" />
+    <!-- Horizontal bar -->
+    <rect x="100" y="226" width="312" height="60" rx="30" fill="#ffffff" />
+    <!-- Heartbeat / Center Accent -->
+    <circle cx="256" cy="256" r="28" fill="#0d9488" />
+    <circle cx="256" cy="256" r="14" fill="#ffffff" />
+  </g>
+</svg>

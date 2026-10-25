@@ -1,19 +1,84 @@
 {
+  "id": "/",
   "name": "Chaudhari Skin & Dental Care HMS",
   "short_name": "Chaudhari HMS",
-  "description": "Hospital Management System, Clinical EMR & Medicare Pharmacy for Chaudhari Clinic Khamgaon",
+  "description": "Hospital Management System, Clinical EMR & Medicare Pharmacy for Chaudhari Skin and Dental Care Clinic, Khamgaon.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "any",
+  "dir": "ltr",
+  "lang": "en-IN",
   "background_color": "#f8fafc",
   "theme_color": "#0f766e",
-  "orientation": "any",
-  "categories": ["medical", "health", "business"],
+  "categories": [
+    "medical",
+    "health",
+    "business"
+  ],
   "icons": [
     {
-      "src": "/favicon.svg",
-      "sizes": "192x192 512x512",
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/app-icon.svg",
+      "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshot-wide.jpg",
+      "sizes": "1280x720",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Chaudhari Clinic Clinical EMR & Hospital Management System"
+    },
+    {
+      "src": "/screenshot-narrow.jpg",
+      "sizes": "720x1280",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Chaudhari Clinic Mobile Admissions & Pharmacy Desk"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Reception Desk",
+      "short_name": "Reception",
+      "description": "Admissions & Queue Management",
+      "url": "/?view=reception",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Doctor Consultation",
+      "short_name": "Doctor",
+      "description": "Doctor EMR & Prescriptions",
+      "url": "/?view=doctor",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Medicare Pharmacy",
+      "short_name": "Pharmacy",
+      "description": "Prescription Dispensing Queue",
+      "url": "/?view=pharmacy",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }
