@@ -291,6 +291,12 @@ export class BillingPortal {
                   <button type="button" class="btn btn-outline" id="btn-next-pending-bill">
                     Bill Next Patient →
                   </button>
+                  <button type="button" class="btn btn-outline" id="btn-billing-goto-records">
+                    📁 Medical Records
+                  </button>
+                  <button type="button" class="btn btn-outline" id="btn-billing-goto-reception">
+                    👥 OPD Queue
+                  </button>
                 </div>
               </div>
             ` : `
@@ -578,6 +584,22 @@ export class BillingPortal {
       btnNext.addEventListener('click', () => {
         const pending = hospitalDb.getAllPatients().find(p => p.billing && (p.billing.paymentStatus === 'Pending' || p.billing.paymentStatus === 'Partial'));
         this.setPatient(pending ? pending.patientId : null);
+      });
+    }
+
+    const btnGoRecords = this.container.querySelector('#btn-billing-goto-records');
+    if (btnGoRecords) {
+      btnGoRecords.addEventListener('click', () => {
+        playClinicChime('click');
+        this.onNavigate('records');
+      });
+    }
+
+    const btnGoReception = this.container.querySelector('#btn-billing-goto-reception');
+    if (btnGoReception) {
+      btnGoReception.addEventListener('click', () => {
+        playClinicChime('click');
+        this.onNavigate('reception');
       });
     }
 

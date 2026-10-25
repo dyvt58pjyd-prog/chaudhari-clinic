@@ -268,6 +268,12 @@ export class AdminPortal {
                     </td>
                     <td style="text-align: right;">
                       <div class="action-btn-group">
+                        <button type="button" class="btn-icon-xs btn-admin-goto-doc" data-id="${p.patientId}" title="Open Consultation in Doctor EMR">
+                          🩺
+                        </button>
+                        <button type="button" class="btn-icon-xs btn-admin-goto-bill" data-id="${p.patientId}" title="Open Invoice in Billing Desk">
+                          💳
+                        </button>
                         <button type="button" class="btn-icon-xs btn-admin-print-opd" data-id="${p.patientId}" title="Print OPD Registration Slip">
                           📄
                         </button>
@@ -549,6 +555,22 @@ export class AdminPortal {
         const pid = btn.getAttribute('data-id');
         const p = hospitalDb.getPatientById(pid);
         if (p) printOpdSlip(p, config);
+      });
+    });
+
+    this.container.querySelectorAll('.btn-admin-goto-doc').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const pid = btn.getAttribute('data-id');
+        playClinicChime('click');
+        this.onNavigate('doctor', pid);
+      });
+    });
+
+    this.container.querySelectorAll('.btn-admin-goto-bill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const pid = btn.getAttribute('data-id');
+        playClinicChime('click');
+        this.onNavigate('billing', pid);
       });
     });
 

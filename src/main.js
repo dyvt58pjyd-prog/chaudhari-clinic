@@ -13,7 +13,27 @@ function initApplication() {
   const bottomNavMount = document.querySelector('#app-bottom-nav');
   const viewport = document.querySelector('#app-viewport');
 
-  let activeView = authService.isAuthenticated() ? (authService.getCurrentUser()?.role || 'login') : 'login';
+  // Parse URL hash for deep-linking (#doctor/CSD-P1002, #billing/CSD-P1001, #records, #reception, #admin)
+  const parseRouteFromHash = () => {
+    if (typeof window === 'undefined') return { view: null, patientId: null };
+    const raw = (window.location.hash || '').replace(/^#\/?/, '').trim();
+    if (!raw) return { view: null, patientId: null };
+    const parts = raw.split('/');
+    const view = parts[0]?.toLowerCase();
+    const patientId = parts[1] || null;
+    const validViews = ['reception', 'doctor', 'billing', 'records', 'admin', 'login'];
+    if (validViews.includes(view)) {
+      return { view, patientId };
+    }
+    return { view: null, patientId: null };
+  };
+
+  const initialRoute = parseRouteFromHash();
+  let intendedRoute = initialRoute.view && initialRoute.view !== 'login' ? initialRoute : null;
+
+  let activeView = authService.isAuthenticated() 
+    ? (initialRoute.view || authService.getCurrentUser()?.role || 'reception') 
+    : 'login';
   let activeDoctorId = authService.getCurrentUser()?.doctorId || null;
 
   let receptionPortal = null;
@@ -22,17 +42,29 @@ function initApplication() {
   let recordsPortal = null;
   let adminPortal = null;
 
-  const navigateTo = (view, patientId = null) => {
+  const navigateTo = (view, patientId = null, updateHash = true) => {
     // If not authenticated, force login view
     if (!authService.isAuthenticated()) {
+      intendedRoute = { view, patientId };
       activeView = 'login';
       authBar.setActiveView('login');
+      if (updateHash && typeof window !== 'undefined') {
+        window.history.replaceState(null, '', '#login');
+      }
       renderCurrentView();
       return;
     }
 
     activeView = view;
     authBar.setActiveView(view);
+
+    if (updateHash && typeof window !== 'undefined') {
+      const targetHash = patientId ? `#${view}/${patientId}` : `#${view}`;
+      if (window.location.hash !== targetHash) {
+        window.history.pushState({ view, patientId }, '', targetHash);
+      }
+    }
+
     renderCurrentView(patientId);
   };
 
@@ -44,6 +76,10 @@ function initApplication() {
   const handleLogout = () => {
     activeView = 'login';
     activeDoctorId = null;
+    intendedRoute = null;
+    if (typeof window !== 'undefined') {
+      window.history.replaceState(null, '', '#login');
+    }
     authBar.setActiveView('login');
     renderCurrentView();
   };
@@ -54,6 +90,14 @@ function initApplication() {
     (targetView) => navigateTo(targetView),
     () => handleLogout()
   );
+
+  // Listen for browser Back/Forward navigation
+  window.addEventListener('popstate', () => {
+    const route = parseRouteFromHash();
+    if (route.view && authService.isAuthenticated()) {
+      navigateTo(route.view, route.patientId, false);
+    }
+  });
 
   function renderCurrentView(patientId = null, doctorId = null) {
     if (!viewport) return;
@@ -70,9 +114,15 @@ function initApplication() {
       authBar.setActiveView('login');
       new LoginPortal(container, (loggedInUser) => {
         activeDoctorId = loggedInUser.doctorId;
-        activeView = loggedInUser.role;
+        activeView = (intendedRoute && intendedRoute.view) ? intendedRoute.view : loggedInUser.role;
+        const targetPid = intendedRoute ? intendedRoute.patientId : null;
+        intendedRoute = null;
         authBar.setActiveView(activeView);
-        renderCurrentView(null, activeDoctorId);
+        if (typeof window !== 'undefined') {
+          const targetHash = targetPid ? `#${activeView}/${targetPid}` : `#${activeView}`;
+          window.history.pushState(null, '', targetHash);
+        }
+        renderCurrentView(targetPid, activeDoctorId);
       });
       return;
     }
@@ -131,8 +181,9 @@ function initApplication() {
     }
   }
 
-  // Initial render
-  renderCurrentView();
+  // Initial render with deep-linked patient ID if present
+  const initPid = initialRoute.patientId;
+  renderCurrentView(initPid);
 
   // Service Worker Registration for PWA & APK
   if ('serviceWorker' in navigator) {

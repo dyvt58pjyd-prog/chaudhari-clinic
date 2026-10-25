@@ -275,6 +275,12 @@ export class RecordsPortal {
                             <button type="button" class="btn-icon-xs btn-open-casesheet" data-id="${p.patientId}" title="View Full Clinical Case Sheet">
                               👁️
                             </button>
+                            <button type="button" class="btn-icon-xs btn-record-goto-doc" data-id="${p.patientId}" title="Open Consultation in Doctor EMR">
+                              🩺
+                            </button>
+                            <button type="button" class="btn-icon-xs btn-record-goto-bill" data-id="${p.patientId}" title="Open Invoice in Billing Desk">
+                              💳
+                            </button>
                             ${p.prescription ? `
                               <button type="button" class="btn-icon-xs btn-print-record-rx" data-id="${p.patientId}" title="Print 1-Page A4 Prescription">
                                 🖨️
@@ -525,7 +531,13 @@ export class RecordsPortal {
                 <button type="button" class="btn btn-outline btn-sm" id="btn-modal-close-bottom">
                   Close Case Sheet
                 </button>
-                <div class="flex gap-2">
+                <div class="flex gap-2 flex-wrap">
+                  <button type="button" class="btn btn-outline btn-sm" id="btn-modal-goto-doc" data-id="${modalPatient.patientId}">
+                    🩺 Doctor EMR
+                  </button>
+                  <button type="button" class="btn btn-outline btn-sm" id="btn-modal-goto-bill" data-id="${modalPatient.patientId}">
+                    💳 Billing Desk
+                  </button>
                   <button type="button" class="btn btn-outline btn-sm" id="btn-modal-print-opd" data-id="${modalPatient.patientId}">
                     📄 Print OPD Slip
                   </button>
@@ -719,6 +731,31 @@ export class RecordsPortal {
           playClinicChime('click');
           printOpdSlip(p, hospitalDb.getConfig());
         }
+      });
+    });
+
+    // Cross-Portal Navigation from Records
+    this.container.querySelectorAll('.btn-record-goto-doc, #btn-modal-goto-doc').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const pid = btn.getAttribute('data-id');
+        if (this.modalPatientId) {
+          this.modalPatientId = null;
+        }
+        playClinicChime('click');
+        this.onNavigate('doctor', pid);
+      });
+    });
+
+    this.container.querySelectorAll('.btn-record-goto-bill, #btn-modal-goto-bill').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const pid = btn.getAttribute('data-id');
+        if (this.modalPatientId) {
+          this.modalPatientId = null;
+        }
+        playClinicChime('click');
+        this.onNavigate('billing', pid);
       });
     });
 
