@@ -5,6 +5,7 @@ import { LoginPortal } from './components/loginPortal.js';
 import { ReceptionPortal } from './components/receptionPortal.js';
 import { DoctorPortal } from './components/doctorPortal.js';
 import { BillingPortal } from './components/billingPortal.js';
+import { RecordsPortal } from './components/recordsPortal.js';
 import { AdminPortal } from './components/adminPortal.js';
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -18,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
   let receptionPortal = null;
   let doctorPortal = null;
   let billingPortal = null;
+  let recordsPortal = null;
   let adminPortal = null;
 
   const navigateTo = (view, patientId = null) => {
@@ -103,6 +105,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (patientId) {
         billingPortal.setPatient(patientId);
       }
+    } else if (activeView === 'records') {
+      recordsPortal = new RecordsPortal(container, (targetView, pid) => {
+        navigateTo(targetView, pid);
+      });
     } else if (activeView === 'admin') {
       adminPortal = new AdminPortal(container, (targetView, pid) => {
         navigateTo(targetView, pid);

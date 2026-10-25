@@ -193,7 +193,11 @@ export class AuthBar {
         </button>
         <button type="button" class="app-nav-btn ${this.activeView === 'billing' ? 'active' : ''}" id="app-nav-billing">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-          Billing (UPI QR / Cash)
+          Billing Desk
+        </button>
+        <button type="button" class="app-nav-btn ${this.activeView === 'records' ? 'active' : ''}" id="app-nav-records">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Medical Records Storage
         </button>
       `;
     } else if (user.role === 'doctor') {
@@ -204,18 +208,26 @@ export class AuthBar {
         </button>
         <button type="button" class="app-nav-btn ${this.activeView === 'reception' ? 'active' : ''}" id="app-nav-reception">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-          Patient Admissions & Queue
+          Admissions & Queue
         </button>
         <button type="button" class="app-nav-btn ${this.activeView === 'billing' ? 'active' : ''}" id="app-nav-billing">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
           Billing Desk
+        </button>
+        <button type="button" class="app-nav-btn ${this.activeView === 'records' ? 'active' : ''}" id="app-nav-records">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Medical Records Storage
         </button>
       `;
     } else if (user.role === 'admin') {
       navButtonsHtml = `
         <button type="button" class="app-nav-btn ${this.activeView === 'admin' ? 'active' : ''}" id="app-nav-admin">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          Admin Dashboard
+          Admin
+        </button>
+        <button type="button" class="app-nav-btn ${this.activeView === 'records' ? 'active' : ''}" id="app-nav-records">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          Medical Records
         </button>
         <button type="button" class="app-nav-btn ${this.activeView === 'reception' ? 'active' : ''}" id="app-nav-reception">
           Reception
@@ -304,7 +316,7 @@ export class AuthBar {
       const btnRec = this.headerEl.querySelector('#app-nav-reception');
       const btnDoc = this.headerEl.querySelector('#app-nav-doctor');
       const btnBill = this.headerEl.querySelector('#app-nav-billing');
-      const btnPharm = this.headerEl.querySelector('#app-nav-pharmacy');
+      const btnRecords = this.headerEl.querySelector('#app-nav-records');
       const btnAdm = this.headerEl.querySelector('#app-nav-admin');
       const btnLogout = this.headerEl.querySelector('#btn-logout');
       const btnTestNotif = this.headerEl.querySelector('#btn-test-live-notif');
@@ -337,6 +349,7 @@ export class AuthBar {
       if (btnRec) btnRec.addEventListener('click', () => this.onNavigate('reception'));
       if (btnDoc) btnDoc.addEventListener('click', () => this.onNavigate('doctor'));
       if (btnBill) btnBill.addEventListener('click', () => this.onNavigate('billing'));
+      if (btnRecords) btnRecords.addEventListener('click', () => this.onNavigate('records'));
       if (btnAdm) btnAdm.addEventListener('click', () => this.onNavigate('admin'));
 
       if (btnTestNotif) {
@@ -381,11 +394,15 @@ export class AuthBar {
           </button>
           <button type="button" class="android-nav-item ${this.activeView === 'doctor' ? 'active' : ''}" id="m-nav-doctor">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-            <span>Doctor EMR</span>
+            <span>Doctor</span>
           </button>
           <button type="button" class="android-nav-item ${this.activeView === 'billing' ? 'active' : ''}" id="m-nav-billing">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
             <span>Billing</span>
+          </button>
+          <button type="button" class="android-nav-item ${this.activeView === 'records' ? 'active' : ''}" id="m-nav-records">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <span>Records</span>
           </button>
         `;
       } else if (user.role === 'doctor') {
@@ -402,12 +419,20 @@ export class AuthBar {
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
             <span>Billing</span>
           </button>
+          <button type="button" class="android-nav-item ${this.activeView === 'records' ? 'active' : ''}" id="m-nav-records">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <span>Records</span>
+          </button>
         `;
       } else if (user.role === 'admin') {
         mobileNavButtonsHtml = `
           <button type="button" class="android-nav-item ${this.activeView === 'admin' ? 'active' : ''}" id="m-nav-admin">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             <span>Admin</span>
+          </button>
+          <button type="button" class="android-nav-item ${this.activeView === 'records' ? 'active' : ''}" id="m-nav-records">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <span>Records</span>
           </button>
           <button type="button" class="android-nav-item ${this.activeView === 'reception' ? 'active' : ''}" id="m-nav-reception">
             <span>Reception</span>
@@ -434,12 +459,14 @@ export class AuthBar {
       const mRec = this.mobileNavEl.querySelector('#m-nav-reception');
       const mDoc = this.mobileNavEl.querySelector('#m-nav-doctor');
       const mBill = this.mobileNavEl.querySelector('#m-nav-billing');
+      const mRecords = this.mobileNavEl.querySelector('#m-nav-records');
       const mAdm = this.mobileNavEl.querySelector('#m-nav-admin');
       const mLogout = this.mobileNavEl.querySelector('#m-nav-logout');
 
       if (mRec) mRec.addEventListener('click', () => this.onNavigate('reception'));
       if (mDoc) mDoc.addEventListener('click', () => this.onNavigate('doctor'));
       if (mBill) mBill.addEventListener('click', () => this.onNavigate('billing'));
+      if (mRecords) mRecords.addEventListener('click', () => this.onNavigate('records'));
       if (mAdm) mAdm.addEventListener('click', () => this.onNavigate('admin'));
 
       if (mLogout) {

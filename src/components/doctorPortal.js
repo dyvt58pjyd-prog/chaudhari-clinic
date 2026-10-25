@@ -112,6 +112,8 @@ export class DoctorPortal {
     // Patient Queue Search & Filter state
     this.searchQuery = '';
     this.queueFilter = 'all'; // 'all' or doctorId
+    this.dateFilter = 'all'; // 'all', 'today', 'yesterday', or specific YYYY-MM-DD
+    this.shiftFilter = 'all'; // 'all', 'Morning OPD', 'Evening OPD'
 
     // Selective Medicine Box state
     this.formularySearchQuery = '';
@@ -175,19 +177,42 @@ export class DoctorPortal {
     const config = hospitalDb.getConfig();
     const activeDoctor = DOCTORS_ROSTER.find(d => d.id === this.activeDoctorId) || DOCTORS_ROSTER[0];
 
-    // Filter patients by Doctor filter AND Real-Time Search Query (Name or Mobile)
+    // Dates for filtering
+    const todayYMD = hospitalDb.formatDateYMD(new Date());
+    const yesterdayDate = new Date();
+    yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+    const yesterdayYMD = hospitalDb.formatDateYMD(yesterdayDate);
+
+    // Filter patients by Doctor, Date, Shift, and Real-Time Search Query
     const q = (this.searchQuery || '').trim().toLowerCase();
     const filteredPatients = allPatients.filter(p => {
       const matchesDoc = this.queueFilter === 'all' || p.assignedDoctorId === this.queueFilter;
+      
+      let matchesDate = true;
+      if (this.dateFilter === 'today') {
+        matchesDate = p.registeredDate === todayYMD;
+      } else if (this.dateFilter === 'yesterday') {
+        matchesDate = p.registeredDate === yesterdayYMD;
+      } else if (this.dateFilter && this.dateFilter !== 'all') {
+        matchesDate = p.registeredDate === this.dateFilter;
+      }
+
+      let matchesShift = true;
+      if (this.shiftFilter && this.shiftFilter !== 'all') {
+        matchesShift = p.registeredShift === this.shiftFilter;
+      }
+
       let matchesSearch = true;
       if (q) {
         const nameMatch = p.name && p.name.toLowerCase().includes(q);
         const phoneMatch = p.phone && p.phone.includes(q);
         const idMatch = p.patientId && p.patientId.toLowerCase().includes(q);
         const tokenMatch = p.tokenNo && String(p.tokenNo).includes(q);
-        matchesSearch = nameMatch || phoneMatch || idMatch || tokenMatch;
+        const diagMatch = p.clinicalNotes?.diagnosis && p.clinicalNotes.diagnosis.toLowerCase().includes(q);
+        const rvgMatch = p.externalRvgId && p.externalRvgId.toLowerCase().includes(q);
+        matchesSearch = nameMatch || phoneMatch || idMatch || tokenMatch || diagMatch || rvgMatch;
       }
-      return matchesDoc && matchesSearch;
+      return matchesDoc && matchesDate && matchesShift && matchesSearch;
     });
 
     const waitingPatients = filteredPatients.filter(p => p.status === 'Waiting for Doctor');
@@ -249,18 +274,35 @@ export class DoctorPortal {
                 </div>
               </div>
 
-              <!-- Real-Time Patient Search Bar by Name or Mobile -->
+              <!-- Real-Time Patient Search Bar by Name, Mobile, Diagnosis, RVG ID -->
               <div class="doc-queue-search-wrap mt-2">
                 <span class="search-icon">🔍</span>
                 <input 
                   type="text" 
                   id="doc-queue-search-input" 
                   class="form-input form-input-sm" 
-                  placeholder="Search by Patient Name or Mobile..." 
+                  placeholder="Search by Name, Mobile, Diagnosis, or RVG ID..." 
                   value="${this.searchQuery}" 
                   autocomplete="off"
                 />
                 ${this.searchQuery ? `<button type="button" class="search-clear-btn" id="btn-clear-doc-search">✕</button>` : ''}
+              </div>
+
+              <!-- Date & Shift Filter Bar -->
+              <div class="doc-queue-date-bar mt-2 flex items-center justify-between flex-wrap gap-1">
+                <div class="flex items-center gap-1 flex-wrap">
+                  <button type="button" class="q-date-pill ${this.dateFilter === 'all' ? 'active' : ''}" data-date="all">All Dates</button>
+                  <button type="button" class="q-date-pill ${this.dateFilter === 'today' ? 'active' : ''}" data-date="today">Today</button>
+                  <button type="button" class="q-date-pill ${this.dateFilter === 'yesterday' ? 'active' : ''}" data-date="yesterday">Yesterday</button>
+                  <input type="date" id="doc-queue-date-picker" class="form-input form-input-xs" style="width: 130px; font-size: 0.75rem; padding: 2px 4px;" value="${this.dateFilter !== 'all' && this.dateFilter !== 'today' && this.dateFilter !== 'yesterday' ? this.dateFilter : ''}" title="Filter by specific date" />
+                </div>
+                <div class="flex items-center gap-1">
+                  <select id="doc-queue-shift-select" class="form-select form-select-xs" style="font-size: 0.75rem; padding: 3px 6px;">
+                    <option value="all" ${this.shiftFilter === 'all' ? 'selected' : ''}>All Shifts</option>
+                    <option value="Morning OPD" ${this.shiftFilter === 'Morning OPD' ? 'selected' : ''}>🌅 Morning OPD</option>
+                    <option value="Evening OPD" ${this.shiftFilter === 'Evening OPD' ? 'selected' : ''}>🌆 Evening OPD</option>
+                  </select>
+                </div>
               </div>
 
               <!-- Queue Doctor Filter Pills -->
@@ -285,7 +327,7 @@ export class DoctorPortal {
               ${waitingPatients.length === 0 ? `
                 <div class="empty-queue-box">
                   <span>✓</span>
-                  <p>${this.searchQuery ? `No patient matches "${this.searchQuery}"` : 'No waiting patients in this queue right now.'}</p>
+                  <p>${this.searchQuery || this.dateFilter !== 'all' || this.shiftFilter !== 'all' ? 'No waiting patient matches selected date, shift, or search.' : 'No waiting patients in this queue right now.'}</p>
                 </div>
               ` : waitingPatients.map(p => `
                 <div class="compact-queue-row ${p.isEmergency ? 'emergency-row' : ''} ${p.patientId === this.selectedPatientId ? 'selected' : ''}" data-id="${p.patientId}">
@@ -305,6 +347,13 @@ export class DoctorPortal {
                         <span class="cqr-sep">•</span>
                         <span class="cqr-doc-chip ${p.assignedDoctorId}">${p.assignedDoctorId === 'dr-priyanka' ? 'Dr. Priyanka' : p.assignedDoctorId === 'dr-rutika' ? 'Dr. Rutika' : 'Dr. Rajnikant'}</span>
                       </div>
+                      <div class="cqr-time-line mt-1">
+                        <span class="text-xs text-muted font-mono">📅 ${p.registeredDate || ''} • 🕒 ${p.registeredTime || ''}</span>
+                        <span class="rec-shift-badge ${p.registeredShift === 'Morning OPD' ? 'shift-morning' : 'shift-evening'} text-xs ml-1" style="font-size: 0.68rem; padding: 1px 6px;">
+                          ${p.registeredShift === 'Morning OPD' ? 'Morning OPD' : 'Evening OPD'}
+                        </span>
+                        ${p.visitHistory && p.visitHistory.length > 0 ? `<span class="badge-uhid ml-1" style="font-size: 0.65rem; padding: 1px 5px;">🔁 ${p.visitHistory.length + 1} Visits</span>` : ''}
+                      </div>
                     </div>
                   </div>
                   <div class="cqr-right">
@@ -315,7 +364,7 @@ export class DoctorPortal {
                 </div>
               `).join('')}
 
-              <div class="queue-section-label mt-3">Consulted Today (${completedPatients.length}):</div>
+              <div class="queue-section-label mt-3">Consulted (${completedPatients.length}):</div>
               ${completedPatients.slice(0, 8).map(cp => `
                 <div class="compact-queue-row completed ${cp.patientId === this.selectedPatientId ? 'selected' : ''}" data-id="${cp.patientId}">
                   <div class="cqr-left">
@@ -331,6 +380,12 @@ export class DoctorPortal {
                         <span class="cqr-phone font-mono">${cp.phone}</span>
                         <span class="cqr-sep">•</span>
                         <span class="text-xs text-muted">${cp.clinicalNotes?.diagnosis || 'Consulted'}</span>
+                      </div>
+                      <div class="cqr-time-line mt-1">
+                        <span class="text-xs text-muted font-mono">📅 ${cp.consultedDate || cp.registeredDate || ''} • 🕒 ${cp.consultedTime || cp.registeredTime || ''}</span>
+                        <span class="rec-shift-badge ${cp.consultedShift || cp.registeredShift === 'Morning OPD' ? 'shift-morning' : 'shift-evening'} text-xs ml-1" style="font-size: 0.68rem; padding: 1px 6px;">
+                          ${cp.consultedShift || cp.registeredShift || 'OPD'}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -366,7 +421,7 @@ export class DoctorPortal {
                   <div>
                     <span class="patient-id-badge">${selectedPatient.patientId}</span>
                     <h3 class="banner-patient-name">${selectedPatient.name}</h3>
-                    <p class="banner-patient-meta">${selectedPatient.age} Yrs • ${selectedPatient.gender} • Mobile: +91 ${selectedPatient.phone}</p>
+                    <p class="banner-patient-meta">${selectedPatient.age} Yrs • ${selectedPatient.gender} • Mobile: +91 ${selectedPatient.phone} • 📅 ${selectedPatient.registeredDate || ''} 🕒 ${selectedPatient.registeredTime || ''} (${selectedPatient.registeredShift || 'OPD'})</p>
                     <p class="banner-patient-addr text-xs text-muted">Address: ${selectedPatient.address}</p>
                   </div>
                   <div class="banner-token-badge">
@@ -375,6 +430,41 @@ export class DoctorPortal {
                     ${selectedPatient.isEmergency ? `<span class="text-xs text-red font-bold">EMERGENCY</span>` : ''}
                   </div>
                 </div>
+
+                <!-- Past Medical Records & Visit History (if returning patient) -->
+                ${selectedPatient.visitHistory && selectedPatient.visitHistory.length > 0 ? `
+                  <div class="cs-section mt-2" style="border: 1.5px solid #0f766e; background: #f0fdfa;">
+                    <div class="flex items-center justify-between flex-wrap gap-2">
+                      <div class="flex items-center gap-2">
+                        <span class="text-lg">📁</span>
+                        <div>
+                          <strong class="text-sm text-teal-dark">Past Medical Records & Visit History (${selectedPatient.visitHistory.length} Previous Consultations)</strong>
+                          <p class="text-xs text-muted">Archived clinical checkups, historical diagnoses, and previously prescribed medications</p>
+                        </div>
+                      </div>
+                      <button type="button" class="btn btn-secondary btn-xs" id="btn-view-mrd-archive">
+                        🗄️ Open Full MRD Archive →
+                      </button>
+                    </div>
+                    <div class="past-visits-list mt-2" style="display: flex; flex-direction: column; gap: 8px;">
+                      ${selectedPatient.visitHistory.map((vh, idx) => `
+                        <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: var(--radius-sm); padding: 8px 12px; font-size: 0.8rem;">
+                          <div class="flex items-center justify-between mb-1">
+                            <span class="font-bold text-teal">Visit #${idx + 1} • 📅 ${vh.date} 🕒 ${vh.time || ''}</span>
+                            <span class="rec-shift-badge ${vh.shift === 'Morning OPD' ? 'shift-morning' : 'shift-evening'}">${vh.shift || 'OPD'}</span>
+                          </div>
+                          <div class="font-semibold text-main">Diagnosis: ${vh.diagnosis || 'General Checkup'}</div>
+                          ${vh.findings ? `<div class="text-xs text-muted mt-1">Findings: ${vh.findings}</div>` : ''}
+                          ${vh.medicines && vh.medicines.length > 0 ? `
+                            <div class="rec-med-pills mt-1">
+                              ${vh.medicines.map(m => `<span class="rec-med-chip">℞ ${m.name} (${m.frequency})</span>`).join('')}
+                            </div>
+                          ` : ''}
+                        </div>
+                      `).join('')}
+                    </div>
+                  </div>
+                ` : ''}
 
                 <!-- Section 0: Critical Medical Safety Alerts & External RVG ID Strip -->
                 <div class="safety-and-xray-card">
@@ -1031,6 +1121,31 @@ export class DoctorPortal {
       });
     });
 
+    // 4b. Queue Date Filter Pills & Picker
+    this.container.querySelectorAll('.q-date-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        this.dateFilter = pill.getAttribute('data-date');
+        this.render();
+      });
+    });
+
+    const datePicker = this.container.querySelector('#doc-queue-date-picker');
+    if (datePicker) {
+      datePicker.addEventListener('change', (e) => {
+        this.dateFilter = e.target.value || 'all';
+        this.render();
+      });
+    }
+
+    // 4c. Queue Shift Select
+    const shiftSelect = this.container.querySelector('#doc-queue-shift-select');
+    if (shiftSelect) {
+      shiftSelect.addEventListener('change', (e) => {
+        this.shiftFilter = e.target.value;
+        this.render();
+      });
+    }
+
     // 5. Queue Patient 1-Tap Click Selection (Works on Mobile, Tablet & Desktop)
     this.container.querySelectorAll('.compact-queue-row, .btn-attend-patient').forEach(el => {
       el.addEventListener('click', (e) => {
@@ -1043,6 +1158,14 @@ export class DoctorPortal {
         }
       });
     });
+
+    // 5b. Open Full MRD Archive from workspace
+    const btnMrdArchive = this.container.querySelector('#btn-view-mrd-archive');
+    if (btnMrdArchive) {
+      btnMrdArchive.addEventListener('click', () => {
+        this.onNavigate('records');
+      });
+    }
 
     if (!selectedPatient) return;
 

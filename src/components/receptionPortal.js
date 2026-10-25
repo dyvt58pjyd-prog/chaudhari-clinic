@@ -15,6 +15,8 @@ export class ReceptionPortal {
     this.currentTab = 'registration'; // 'registration' or 'registry'
     this.searchQuery = '';
     this.statusFilter = 'all';
+    this.dateFilter = 'all'; // 'all', 'today', 'yesterday', or YYYY-MM-DD
+    this.shiftFilter = 'all'; // 'all', 'Morning OPD', 'Evening OPD'
     this.lastRegisteredPatient = null;
     this.recognizedReturningPatient = null;
     this.isEmergencyActive = false;
@@ -46,7 +48,26 @@ export class ReceptionPortal {
     const patients = hospitalDb.getAllPatients();
     const config = hospitalDb.getConfig();
 
+    const todayYMD = hospitalDb.formatDateYMD(new Date());
+    const yesterdayDate = new Date();
+    yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+    const yesterdayYMD = hospitalDb.formatDateYMD(yesterdayDate);
+
     const filteredPatients = patients.filter(p => {
+      let matchesDate = true;
+      if (this.dateFilter === 'today') {
+        matchesDate = p.registeredDate === todayYMD;
+      } else if (this.dateFilter === 'yesterday') {
+        matchesDate = p.registeredDate === yesterdayYMD;
+      } else if (this.dateFilter && this.dateFilter !== 'all') {
+        matchesDate = p.registeredDate === this.dateFilter;
+      }
+
+      let matchesShift = true;
+      if (this.shiftFilter && this.shiftFilter !== 'all') {
+        matchesShift = p.registeredShift === this.shiftFilter;
+      }
+
       const matchesSearch = !this.searchQuery || 
         p.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
         p.patientId.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
@@ -54,7 +75,7 @@ export class ReceptionPortal {
         p.address.toLowerCase().includes(this.searchQuery.toLowerCase());
       
       const matchesStatus = this.statusFilter === 'all' || p.status === this.statusFilter;
-      return matchesSearch && matchesStatus;
+      return matchesDate && matchesShift && matchesSearch && matchesStatus;
     });
 
     const waitingCount = patients.filter(p => p.status === 'Waiting for Doctor').length;
@@ -302,10 +323,24 @@ export class ReceptionPortal {
         </div>
 
         <!-- Search & Filter Controls -->
-        <div class="registry-filters-bar">
-          <div class="search-input-wrap">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-            <input type="text" id="registry-search-input" class="search-input" placeholder="🔍 Search by Patient Name or 10-digit Mobile Number (e.g. Suresh, 9822145670)..." value="${this.searchQuery}" />
+        <div class="registry-filters-bar flex flex-col gap-2">
+          <div class="flex items-center gap-2 flex-wrap">
+            <div class="search-input-wrap flex-1">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="registry-search-input" class="search-input" placeholder="🔍 Search by Patient Name or 10-digit Mobile Number (e.g. Suresh, 9822145670)..." value="${this.searchQuery}" />
+            </div>
+
+            <div class="flex items-center gap-1 flex-wrap">
+              <button type="button" class="rec-date-pill ${this.dateFilter === 'all' ? 'active' : ''}" data-date="all">All Dates</button>
+              <button type="button" class="rec-date-pill ${this.dateFilter === 'today' ? 'active' : ''}" data-date="today">Today</button>
+              <button type="button" class="rec-date-pill ${this.dateFilter === 'yesterday' ? 'active' : ''}" data-date="yesterday">Yesterday</button>
+              <input type="date" id="registry-date-picker" class="form-input form-input-xs" style="width: 130px; font-size: 0.75rem; padding: 3px 5px;" value="${this.dateFilter !== 'all' && this.dateFilter !== 'today' && this.dateFilter !== 'yesterday' ? this.dateFilter : ''}" title="Filter by specific date" />
+              <select id="registry-shift-select" class="form-select form-select-xs" style="font-size: 0.75rem; padding: 4px 6px;">
+                <option value="all" ${this.shiftFilter === 'all' ? 'selected' : ''}>All Shifts</option>
+                <option value="Morning OPD" ${this.shiftFilter === 'Morning OPD' ? 'selected' : ''}>🌅 Morning OPD</option>
+                <option value="Evening OPD" ${this.shiftFilter === 'Evening OPD' ? 'selected' : ''}>🌆 Evening OPD</option>
+              </select>
+            </div>
           </div>
 
           <div class="status-filter-pills">
@@ -322,19 +357,20 @@ export class ReceptionPortal {
             <table class="hospital-table">
               <thead>
                 <tr>
-                  <th style="width: 14%;">Patient ID & Token</th>
-                  <th style="width: 20%;">Patient Name & Age</th>
-                  <th style="width: 13%;">Mobile Number</th>
-                  <th style="width: 18%;">Address</th>
-                  <th style="width: 15%;">Assigned Doctor</th>
-                  <th style="width: 10%;">Status</th>
-                  <th style="width: 10%; text-align: right;">Actions</th>
+                  <th style="width: 13%;">Patient ID & Token</th>
+                  <th style="width: 18%;">Patient Name & Age</th>
+                  <th style="width: 15%;">Registered Time & Shift</th>
+                  <th style="width: 12%;">Mobile Number</th>
+                  <th style="width: 16%;">Address</th>
+                  <th style="width: 14%;">Assigned Doctor</th>
+                  <th style="width: 8%;">Status</th>
+                  <th style="width: 8%; text-align: right;">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 ${filteredPatients.length === 0 ? `
                   <tr>
-                    <td colspan="7" class="text-center py-6 text-muted">No patient records found matching your query.</td>
+                    <td colspan="8" class="text-center py-6 text-muted">No patient records found matching your date, shift, or search query.</td>
                   </tr>
                 ` : filteredPatients.map(p => `
                   <tr class="${p.isEmergency ? 'emergency-row' : ''}">
@@ -344,10 +380,18 @@ export class ReceptionPortal {
                         ${p.isEmergency ? `<span class="emergency-badge-pulse" title="Emergency Priority">🚨</span>` : ''}
                       </div>
                       <span class="token-sub font-bold text-teal">Token #${p.tokenNo}</span>
+                      ${p.visitHistory && p.visitHistory.length > 0 ? `<div class="text-xs text-muted">🔁 ${p.visitHistory.length + 1} Visits</div>` : ''}
                     </td>
                     <td>
                       <strong>${p.name}</strong>
                       <div class="text-xs text-muted">${p.age} Yrs • ${p.gender}</div>
+                    </td>
+                    <td>
+                      <div class="text-xs font-mono font-bold">📅 ${p.registeredDate || ''}</div>
+                      <div class="text-xs text-muted font-mono">🕒 ${p.registeredTime || ''}</div>
+                      <span class="rec-shift-badge ${p.registeredShift === 'Morning OPD' ? 'shift-morning' : 'shift-evening'}" style="font-size: 0.68rem; padding: 1px 6px;">
+                        ${p.registeredShift || 'OPD'}
+                      </span>
                     </td>
                     <td class="font-mono text-sm">+91 ${p.phone}</td>
                     <td class="text-xs text-muted" title="${p.address}">${p.address.length > 28 ? p.address.slice(0, 28) + '...' : p.address}</td>
@@ -585,6 +629,30 @@ export class ReceptionPortal {
         this.render();
       });
     });
+
+    // Date filter pills
+    this.container.querySelectorAll('.rec-date-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        this.dateFilter = pill.getAttribute('data-date');
+        this.render();
+      });
+    });
+
+    const regDatePicker = this.container.querySelector('#registry-date-picker');
+    if (regDatePicker) {
+      regDatePicker.addEventListener('change', (e) => {
+        this.dateFilter = e.target.value || 'all';
+        this.render();
+      });
+    }
+
+    const regShiftSelect = this.container.querySelector('#registry-shift-select');
+    if (regShiftSelect) {
+      regShiftSelect.addEventListener('change', (e) => {
+        this.shiftFilter = e.target.value;
+        this.render();
+      });
+    }
 
     // Direct actions on table rows
     this.container.querySelectorAll('.btn-direct-bill').forEach(btn => {

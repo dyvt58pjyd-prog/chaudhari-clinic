@@ -19,6 +19,8 @@ export class BillingPortal {
     this.upiTxnRef = '';
     this.generatedQrDataUrl = null;
     this.searchQuery = '';
+    this.dateFilter = 'all'; // 'all', 'today', 'yesterday', or YYYY-MM-DD
+    this.shiftFilter = 'all'; // 'all', 'Morning OPD', 'Evening OPD'
     this.staffName = 'Reception Desk - Sunita';
     this.render();
   }
@@ -61,15 +63,39 @@ export class BillingPortal {
     const patients = hospitalDb.getAllPatients();
     const config = hospitalDb.getConfig();
 
-    // Real-time search filter by Name or Mobile
+    const todayYMD = hospitalDb.formatDateYMD(new Date());
+    const yesterdayDate = new Date();
+    yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+    const yesterdayYMD = hospitalDb.formatDateYMD(yesterdayDate);
+
+    // Multi-criteria filter: Search, Date, Shift
     const q = (this.searchQuery || '').trim().toLowerCase();
     const filterFn = (p) => {
+      let matchesDate = true;
+      const recDate = p.billing?.billedDate || p.registeredDate;
+      if (this.dateFilter === 'today') {
+        matchesDate = recDate === todayYMD;
+      } else if (this.dateFilter === 'yesterday') {
+        matchesDate = recDate === yesterdayYMD;
+      } else if (this.dateFilter && this.dateFilter !== 'all') {
+        matchesDate = recDate === this.dateFilter;
+      }
+
+      let matchesShift = true;
+      const recShift = p.billing?.billedShift || p.registeredShift;
+      if (this.shiftFilter && this.shiftFilter !== 'all') {
+        matchesShift = recShift === this.shiftFilter;
+      }
+
+      if (!matchesDate || !matchesShift) return false;
+
       if (!q) return true;
       const nameMatch = p.name && p.name.toLowerCase().includes(q);
       const phoneMatch = p.phone && p.phone.includes(q);
       const idMatch = p.patientId && p.patientId.toLowerCase().includes(q);
       const tokenMatch = p.tokenNo && String(p.tokenNo).includes(q);
-      return nameMatch || phoneMatch || idMatch || tokenMatch;
+      const invMatch = p.billing?.invoiceId && p.billing.invoiceId.toLowerCase().includes(q);
+      return nameMatch || phoneMatch || idMatch || tokenMatch || invMatch;
     };
 
     // Find billable and paid patients
@@ -126,18 +152,33 @@ export class BillingPortal {
                 type="text" 
                 id="billing-search-input" 
                 class="form-input form-input-sm" 
-                placeholder="Search Name or Mobile..." 
+                placeholder="Search Name, Mobile, Invoice #..." 
                 value="${this.searchQuery}" 
                 autocomplete="off"
               />
               ${this.searchQuery ? `<button type="button" class="search-clear-btn" id="btn-clear-billing-search">✕</button>` : ''}
             </div>
 
+            <!-- Date & Shift Filter Bar -->
+            <div class="mb-2 flex items-center justify-between flex-wrap gap-1">
+              <div class="flex items-center gap-1 flex-wrap">
+                <button type="button" class="bill-date-pill ${this.dateFilter === 'all' ? 'active' : ''}" data-date="all">All Dates</button>
+                <button type="button" class="bill-date-pill ${this.dateFilter === 'today' ? 'active' : ''}" data-date="today">Today</button>
+                <button type="button" class="bill-date-pill ${this.dateFilter === 'yesterday' ? 'active' : ''}" data-date="yesterday">Yesterday</button>
+                <input type="date" id="billing-date-picker" class="form-input form-input-xs" style="width: 125px; font-size: 0.72rem; padding: 2px 4px;" value="${this.dateFilter !== 'all' && this.dateFilter !== 'today' && this.dateFilter !== 'yesterday' ? this.dateFilter : ''}" title="Filter bills by date" />
+              </div>
+              <select id="billing-shift-select" class="form-select form-select-xs" style="font-size: 0.72rem; padding: 3px 5px;">
+                <option value="all" ${this.shiftFilter === 'all' ? 'selected' : ''}>All Shifts</option>
+                <option value="Morning OPD" ${this.shiftFilter === 'Morning OPD' ? 'selected' : ''}>🌅 Morning</option>
+                <option value="Evening OPD" ${this.shiftFilter === 'Evening OPD' ? 'selected' : ''}>🌆 Evening</option>
+              </select>
+            </div>
+
             <div class="pending-bills-list">
               ${billablePatients.length === 0 ? `
                 <div class="empty-bills-msg">
                   <span class="empty-icon">✓</span>
-                  <p>${this.searchQuery ? `No billing records found matching "${this.searchQuery}"` : 'All patient bills are clear! No pending payments.'}</p>
+                  <p>${this.searchQuery || this.dateFilter !== 'all' ? 'No pending bills matching selected filters.' : 'All patient bills are clear! No pending payments.'}</p>
                 </div>
               ` : billablePatients.map(p => `
                 <div class="bill-patient-chip ${p.patientId === this.selectedPatientId ? 'selected' : ''}" data-id="${p.patientId}">
@@ -147,6 +188,12 @@ export class BillingPortal {
                   </div>
                   <strong class="chip-name">${p.name}</strong>
                   <div class="chip-doctor">${p.clinicalNotes ? p.clinicalNotes.doctorName.split(' ')[1] : 'OPD'} • 📞 ${p.phone}</div>
+                  <div class="text-xs text-muted font-mono mt-1">
+                    📅 ${p.registeredDate || ''} • 🕒 ${p.registeredTime || ''}
+                    <span class="rec-shift-badge ${p.registeredShift === 'Morning OPD' ? 'shift-morning' : 'shift-evening'} text-xs ml-1" style="font-size: 0.65rem; padding: 1px 5px;">
+                      ${p.registeredShift === 'Morning OPD' ? 'Morning' : 'Evening'}
+                    </span>
+                  </div>
                 </div>
               `).join('')}
             </div>
@@ -159,7 +206,8 @@ export class BillingPortal {
                   <div class="recent-paid-item">
                     <div>
                       <div class="font-bold text-xs">${cp.name} (${cp.patientId})</div>
-                      <div class="text-xs text-muted">${cp.billing.invoiceId} • Paid via ${cp.billing.paymentMethod} • 📞 ${cp.phone}</div>
+                      <div class="text-xs text-muted">${cp.billing.invoiceId} • Paid ₹${cp.billing.paidAmount !== undefined ? cp.billing.paidAmount : cp.billing.totalAmount} via ${cp.billing.paymentMethod}</div>
+                      <div class="text-xs text-muted font-mono">📅 ${cp.billing.billedDate || cp.registeredDate || ''} 🕒 ${cp.billing.billedTime || ''} (${cp.billing.billedShift || cp.registeredShift || 'OPD'})</div>
                     </div>
                     <button type="button" class="btn-icon-xs btn-reprint-inv" data-id="${cp.patientId}" title="Print Invoice">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
@@ -436,6 +484,30 @@ export class BillingPortal {
     if (btnClearSearch) {
       btnClearSearch.addEventListener('click', () => {
         this.searchQuery = '';
+        this.render();
+      });
+    }
+
+    // Date filter pills
+    this.container.querySelectorAll('.bill-date-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        this.dateFilter = pill.getAttribute('data-date');
+        this.render();
+      });
+    });
+
+    const billDatePicker = this.container.querySelector('#billing-date-picker');
+    if (billDatePicker) {
+      billDatePicker.addEventListener('change', (e) => {
+        this.dateFilter = e.target.value || 'all';
+        this.render();
+      });
+    }
+
+    const billShiftSelect = this.container.querySelector('#billing-shift-select');
+    if (billShiftSelect) {
+      billShiftSelect.addEventListener('change', (e) => {
+        this.shiftFilter = e.target.value;
         this.render();
       });
     }
